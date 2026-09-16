@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment files
+.env
+.env.*
+assets/.env.local
+
+# Database Configuration (Keeps your Supabase keys private)
+assets/js/config/config.js
+
+# Logs and OS files
+*.log
+.DS_Store
+Thumbs.db
+
+# Keys and secrets
+keys/
+
+# Database Schema and Internal Docs
+docs/*
+!docs/env.example
+!docs/PRD.md
+!docs/browser_mobile_preview_guide.md
+!docs/file_structure.md
+!docs/android_build_guide.md
+!docs/system_flowchart.md
+!docs/key_features.md
