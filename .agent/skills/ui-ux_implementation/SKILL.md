@@ -1,30 +1,26 @@
 ---
 name: ui-ux
-description: UI/UX design standards, mobile-first component anatomy, Tailwind CSS styling tokens, and design system guidelines for MentorLink (Mentorship & Tutoring Matching Application). Use when designing, creating, or refining mobile views, layouts, cards, bottom sheets, or navigation.
+description: UI/UX design standards, mobile-first component anatomy, Tailwind CSS styling tokens, and design system guidelines for MentorLinks (Mentorship & Tutoring Matching Application). Use when designing, creating, or refining mobile views, layouts, cards, bottom sheets, or navigation.
 ---
 
-# UI/UX Design System Skill (MentorLink)
+# UI/UX Design System Skill (MentorLinks)
 
 ## Goal
 
-Provide a modern, flexible, and robust **mobile-first design system** using **Tailwind CSS** for **MentorLink — Mentorship & Tutoring Matching Application**. 
-
-> [!NOTE]
-> **Design Status: Ongoing / Planning Phase**  
-> The project UI/UX design is currently being finalized by the team. This skill defines the fundamental mobile ergonomics, design tokens, component anatomy, and responsive constraints so that ongoing visual designs can be cleanly integrated into the React codebase without structural rework.
+Provide a modern, flexible, and robust **mobile-first design system** using **Tailwind CSS** and the **Ocean Breeze** theme for **MentorLinks — Mentorship & Tutoring Matching Application** (*"Connect. Learn. Grow."*).
 
 ---
 
 ## 1. Mobile-First Ergonomics & Constraints
 
-Because MentorLink is packaged as a standalone **Android Mobile Application (APK)**, all screens must adhere to native mobile standards:
+Because MentorLinks is packaged as a standalone **Android Mobile Application (APK)**, all screens must adhere to native mobile ergonomics:
 
 ```
   ┌────────────────────────────────────────────────────────┐
   │                 TOP APP BAR (Sticky)                   │
-  │  - Screen Title / Logo                                 │
-  │  - Mode Switcher (Learner ↔ Mentor toggle)            │
-  │  - Notifications / Profile Avatar                      │
+  │  - Screen Title / Logo ("MentorLinks")                 │
+  │  - Mode Switcher (Student ↔ Mentor toggle)            │
+  │  - Notifications (Bell) / Profile Avatar               │
   ├────────────────────────────────────────────────────────┤
   │                                                        │
   │                 SCROLLABLE CONTENT AREA                │
@@ -35,7 +31,8 @@ Because MentorLink is packaged as a standalone **Android Mobile Application (APK
   │                                                        │
   ├────────────────────────────────────────────────────────┤
   │              BOTTOM NAVIGATION BAR (Fixed)             │
-  │  [Home]      [Find Tutor]      [My Sessions] [Profile] │
+  │  Student: [Home] [Explore]  [Messages] [Sessions] [Profile]
+  │  Mentor:  [Home] [Students] [Messages] [Sessions] [Profile]
   └────────────────────────────────────────────────────────┘
 ```
 
@@ -49,96 +46,134 @@ Because MentorLink is packaged as a standalone **Android Mobile Application (APK
 
 ---
 
-## 2. Core Color Palette & Design Tokens
+## 2. Ocean Breeze Color Palette & Design Tokens
 
-A clean, modern academic color palette optimized for high contrast, readability, and student focus:
+A fresh, modern academic palette designed for focus, clarity, and visual delight:
 
 | Token / Category | Tailwind Classes | Hex Value | Application / Purpose |
 | :--- | :--- | :--- | :--- |
-| **Primary Brand (Indigo)** | `bg-indigo-600`, `text-indigo-600` | `#4f46e5` | Primary action buttons, active tab indicators, brand highlights. |
-| **Primary Hover / Active**| `hover:bg-indigo-700`, `active:bg-indigo-800` | `#4338ca` | Button tap / hover states. |
-| **Primary Soft Tint** | `bg-indigo-50`, `text-indigo-700` | `#eef2ff` | Active filter pills, selected time slots, icon badge backgrounds. |
-| **Canvas Background** | `bg-slate-50` | `#f8fafc` | Mobile screen background. |
+| **Primary Sky** | `bg-sky-600`, `text-sky-600` | `#0284c7` | Primary action buttons, active tab indicators, brand highlights. |
+| **Accent Sky / Cyan** | `bg-sky-500`, `text-sky-500`, `bg-cyan-500` | `#0ea5e9`, `#06b6d4` | Secondary accents, hero banner gradients, progress bars. |
+| **Primary Hover / Active**| `hover:bg-sky-700`, `active:bg-sky-800` | `#0369a1` | Button tap and interactive pressed states. |
+| **Primary Soft Tint** | `bg-sky-50`, `text-sky-700`, `border-sky-100` | `#f0f9ff` | Active filter pills, selected time slots, badge backgrounds. |
+| **Canvas Background** | `bg-slate-50` | `#f8fafc` | Mobile screen canvas background. |
 | **Card Surface** | `bg-white` | `#ffffff` | Content cards, bottom sheets, modals, bottom navigation bar. |
 | **Borders & Dividers** | `border-slate-200`, `divide-slate-100` | `#e2e8f0` | Card borders, list dividers, input outlines. |
-| **Primary Heading** | `text-slate-900` | `#0f172a` | Screen titles, tutor names, strong labels. |
+| **Deep Navy Heading** | `text-slate-900` | `#0f172a` | Screen titles, mentor names, metric values, strong labels. |
 | **Body Text** | `text-slate-600` | `#475569` | Descriptions, topics, session notes, input text. |
 | **Muted / Subtext** | `text-slate-400` | `#94a3b8` | Timestamps, placeholders, inactive navigation icons. |
-| **Success / Verified (Green)**| `bg-emerald-50`, `text-emerald-700`, `border-emerald-200` | `#059669` | `confirmed`, `completed`, free/volunteer badge, payment confirmed. |
-| **Warning / Pending (Amber)**| `bg-amber-50`, `text-amber-700`, `border-amber-200` | `#d97706` | `pending` booking, `payment_submitted` (awaiting tutor verification). |
-| **Danger / Cancelled (Rose)**| `bg-rose-50`, `text-rose-700`, `border-rose-200` | `#e11d48` | `cancelled` session, delete actions, validation errors. |
-| **Service Hours (Purple)** | `bg-purple-50`, `text-purple-700`, `border-purple-200` | `#7c3aed` | Community Service Hours accreditation badges & summaries. |
+| **Success / Verified (Green)**| `bg-emerald-50`, `text-emerald-700`, `border-emerald-200` | `#10b981` | `confirmed`, `completed`, free/volunteer badge, payment verified. |
+| **Warning / Pending (Amber)**| `bg-amber-50`, `text-amber-700`, `border-amber-200` | `#f59e0b` | `pending` booking request, payment under verification. |
+| **Danger / Declined (Rose)**| `bg-rose-50`, `text-rose-700`, `border-rose-200` | `#ef4444` | `declined`, `cancelled` session, delete actions, validation errors. |
+| **Service Hours (Purple)** | `bg-purple-50`, `text-purple-700`, `border-purple-200` | `#8b5cf6` | Community Service Hours accreditation badges & summaries. |
 
 ---
 
-## 3. Component Anatomy & Patterns
+## 3. Iconography Standards: Vector SVGs & Font Awesome (Strictly NO Emojis in UI Code)
 
-### A. Mobile App Shell & Bottom Navigation
-* **Container:** Fixed bottom navigation (`fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/95 backdrop-blur-md border-t border-slate-200 h-16 z-40 px-4 flex items-center justify-around`).
-* **Navigation Item:**
-  * Inactive: `flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 gap-1`
-  * Active: `flex flex-col items-center justify-center text-indigo-600 font-semibold gap-1`
-* **Tabs:**
-  1. `Home` (Dashboard, upcoming session countdown, quick links)
-  2. `Find Tutors` (Search bar, subject filters, tutor directory)
-  3. `My Sessions` (Pending, upcoming, and past tutoring sessions)
-  4. `Profile` (User settings, mode switcher, tutor tools/hours)
+> [!IMPORTANT]
+> **Strict Mandate:** In all React component implementations, NEVER render raw Unicode emojis (`🏠`, `🔍`, `💬`, `📅`, `👤`, `⭐`, `🔔`, `✏️`, `🎉`, etc.) as user interface icons, buttons, navigation items, or status badges.
+>
+> Emojis in markdown documentation, flow specifications, or comments are textual annotations only. During code implementation, they must ALWAYS be translated into clean, scalable **vector SVGs** or **Font Awesome** icons.
 
-### B. Tutor Card
+### A. Approved Iconography Options
+1. **Inline Vector SVGs (Recommended for zero bundle overhead):**
+   * Use clean, semantic `<svg>` elements with Tailwind classes.
+   * Standard icon size: `w-5 h-5` (navigation, headers), `w-4 h-4` (chips, inline text), `w-6 h-6` (prominent actions).
+   * Color binding: Use `currentColor` for `stroke` or `fill` so the icon automatically inherits parent text colors (`text-sky-600`, `text-slate-400`, `text-white`).
+   * Accessibility: Include `aria-hidden="true"` on decorative icons and provide accessible screen-reader labels on icon-only buttons (`aria-label="Search"`).
+2. **Font Awesome Vector Icons:**
+   * Standardized icon library components (e.g. `@fortawesome/react-fontawesome` with `@fortawesome/free-solid-svg-icons`).
+   * Consistent sizing classes (`text-lg`, `text-base`, `text-sm`).
+
+### B. Standard Icon Mappings for MentorLinks
+| UI Concept | Prohibited Emoji | Required Vector SVG / Font Awesome Icon | Tailwind Classes |
+| :--- | :--- | :--- | :--- |
+| **Home Tab** | 🏠 | Home / Dashboard icon | `w-5 h-5 stroke-[1.75]` |
+| **Explore Tab** | 🔍 | Search / Compass / Magnifying glass icon | `w-5 h-5 stroke-[1.75]` |
+| **Messages Tab** | 💬 | Chat bubble / Conversation icon | `w-5 h-5 stroke-[1.75]` |
+| **Sessions Tab** | 📅 | Calendar / Schedule icon | `w-5 h-5 stroke-[1.75]` |
+| **Profile Tab** | 👤 | User / Profile avatar icon | `w-5 h-5 stroke-[1.75]` |
+| **Students Tab** | 👥 | Users / Group roster icon | `w-5 h-5 stroke-[1.75]` |
+| **Notifications** | 🔔 | Bell icon | `w-5 h-5 stroke-[1.75]` |
+| **Rating / Reviews** | ⭐ | Star icon (solid for filled, stroke for empty) | `w-4 h-4 text-amber-500 fill-amber-500` |
+| **Classroom Camera** | 🎥 / 📷 | Video camera icon | `w-5 h-5 text-white` |
+| **Microphone** | 🎤 | Mic / Mic-off icon | `w-5 h-5 text-white` |
+| **End Session** | 🔴 / 📞 | Phone-hangup / Close icon | `w-5 h-5 text-white` |
+| **Status Verified** | ✅ / 🟢 | Check-circle / Shield-check icon | `w-4 h-4 text-emerald-600` |
+| **Status Pending** | ⏳ / 🟠 | Clock / Hourglass icon | `w-4 h-4 text-amber-600` |
+| **Status Declined** | ❌ / 🔴 | X-circle / Alert-circle icon | `w-4 h-4 text-rose-600` |
+| **Service Hours** | 📜 / 🎓 | Award / Certificate / Ribbon icon | `w-4 h-4 text-purple-600` |
+
+---
+
+## 4. Dual 5-Tab Navigation Architecture
+
+### A. Student Navigation (`role = 'student'`)
+1. **Home:** Hero banner, quick stats, active bookings, top recommended mentors, subject chips (Home SVG).
+2. **Explore:** Mentor directory, search input, category chips, hourly rate filters, sort order (Search SVG).
+3. **Messages:** Direct chat threads, unread badge counter, search conversations (Chat Bubble SVG).
+4. **Sessions:** Filter tabs (`Upcoming`, `Completed`, `Cancelled`), payment reference submission, classroom link (Calendar SVG).
+5. **Profile:** Student bio, university details, learning progress, saved mentors, help center, settings (User SVG).
+
+### B. Mentor Navigation (`role = 'mentor'`)
+1. **Home:** Greeting, 2x2 metric cards (Earnings, Total Hours, Rating, Pending Requests), incoming booking requests, scheduled sessions (Home SVG).
+2. **Students:** Roster of active and past mentees, search/filter, quick chat trigger (Users SVG).
+3. **Messages:** Direct chat with students, embedded session reminder banners (Chat Bubble SVG).
+4. **Sessions:** Filter tabs (`Upcoming`, `Requests`, `Completed`), accept/decline actions with decline reason modal (Calendar SVG).
+5. **Profile:** Mentor credentials, subject offerings, availability settings, university service hours summary, settings (User SVG).
+
+---
+
+## 5. Component Anatomy & Patterns
+
+### A. Bottom Navigation Bar
+* **Container:** Fixed bottom navigation (`fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/95 backdrop-blur-md border-t border-slate-200 h-16 z-40 px-2 flex items-center justify-around`).
+* **Tab Item:**
+  * Inactive: `flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 gap-0.5 text-[10px]` with vector SVG (`w-5 h-5 stroke-[1.75]`)
+  * Active: `flex flex-col items-center justify-center text-sky-600 font-semibold gap-0.5 text-[10px]` with vector SVG (`w-5 h-5 stroke-[2]`)
+  * Strictly NO raw Unicode emojis as tab icons.
+
+### B. Mentor Card (`Explore` / `Home`)
 * **Container:** `bg-white rounded-2xl border border-slate-200 p-4 shadow-sm active:scale-[0.99] transition-all space-y-3`
 * **Header:**
   * Avatar (`w-12 h-12 rounded-full bg-slate-100 object-cover`)
   * Name & Education level (`text-sm font-bold text-slate-900`, subtitle `text-xs text-slate-500`)
   * Rate Tag: `text-xs font-bold px-2 py-0.5 rounded-full` (`bg-emerald-50 text-emerald-700` for Volunteer / ₱0, or `bg-slate-100 text-slate-800` for ₱Rate/hr)
-* **Rating & Experience:** `inline-flex items-center gap-1 text-xs text-amber-600 font-bold` (Star icon + `4.9 (18 sessions)`)
-* **Subject Tags:** Horizontal scrolling or flex-wrap chips (`inline-block bg-slate-100 text-slate-700 text-[11px] px-2 py-0.5 rounded-md`)
-* **Action:** Direct tap navigates to `TutorProfileScreen` / `BookSessionScreen`.
+* **Rating & Experience:** `inline-flex items-center gap-1 text-xs text-amber-600 font-bold` (Vector Star SVG + `4.9 (18 sessions)`)
+* **Subject Tags:** Horizontal scrolling or flex-wrap chips (`inline-block bg-sky-50 text-sky-700 text-[11px] px-2 py-0.5 rounded-md font-medium`)
 
 ### C. Booking & Schedule Slot Picker
 * **Day Selector:** Horizontal scrollable day chips (`flex gap-2 overflow-x-auto py-1`).
-  * Selected day: `bg-indigo-600 text-white font-bold rounded-xl px-3 py-2 text-xs shrink-0 shadow-sm`
+  * Selected day: `bg-sky-600 text-white font-bold rounded-xl px-3 py-2 text-xs shrink-0 shadow-sm`
   * Inactive day: `bg-white border border-slate-200 text-slate-700 rounded-xl px-3 py-2 text-xs shrink-0`
 * **Time Slot Pills:** Grid of selectable slots (`grid grid-cols-2 gap-2`).
-  * Selectable: `border border-slate-200 rounded-lg p-2.5 text-center text-xs font-medium hover:border-indigo-500`
-  * Selected: `border-2 border-indigo-600 bg-indigo-50 text-indigo-700 font-bold rounded-lg p-2.5 text-center text-xs`
+  * Selectable: `border border-slate-200 rounded-lg p-2.5 text-center text-xs font-medium hover:border-sky-500`
+  * Selected: `border-2 border-sky-600 bg-sky-50 text-sky-700 font-bold rounded-lg p-2.5 text-center text-xs`
 
-### D. Session Card
-* **Container:** `bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-3`
-* **Status Badges:** Unified pill badges:
-  * `Pending`: `bg-amber-50 text-amber-700 border border-amber-200`
-  * `Confirmed`: `bg-emerald-50 text-emerald-700 border border-emerald-200`
-  * `Completed`: `bg-slate-100 text-slate-700 border border-slate-200`
-* **Content:** Date/Time, Subject title, Meeting Link / Location, and payment status pill.
-* **Tutor/Student Action:**
-  * For Student: "Submit Payment Ref" (if unpaid) or "Rate Tutor" (if completed).
-  * For Tutor: "Confirm Payment", "Add Notes", or "Mark Completed".
+### D. In-App Messaging Thread & Bubbles
+* **Thread Container:** `flex-1 overflow-y-auto p-4 space-y-3`
+* **Sender Bubble (Current User):** `ml-auto max-w-[78%] bg-sky-600 text-white rounded-2xl rounded-br-xs px-4 py-2.5 text-sm shadow-xs`
+* **Receiver Bubble (Peer):** `mr-auto max-w-[78%] bg-white border border-slate-200 text-slate-800 rounded-2xl rounded-bl-xs px-4 py-2.5 text-sm shadow-xs`
+* **Timestamp & Read Status:** `text-[10px] text-right mt-1 opacity-70 flex items-center justify-end gap-1` (Checkmarks as vector SVG)
 
-### E. Slide-Up Bottom Sheet (Mobile Dialogs)
-* **Backdrop:** `fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-end sm:items-center justify-center`
-* **Sheet Container:** `bg-white rounded-t-3xl sm:rounded-2xl max-w-md w-full p-5 shadow-2xl border-t sm:border border-slate-200 animate-slide-up space-y-4 max-h-[85vh] overflow-y-auto`
-* **Handle:** Center drag bar `w-12 h-1.5 bg-slate-300 rounded-full mx-auto mb-2`
-* **Dismiss:** Close button, backdrop tap, and hardware back button.
+### E. Virtual Classroom View
+* **Container:** Full-screen mobile container (`bg-slate-950 text-white fixed inset-0 z-50 flex flex-col justify-between p-4`)
+* **Main Feed:** Dominant remote participant video or presentation stream (`w-full h-full rounded-2xl bg-slate-900 flex items-center justify-center relative`)
+* **Floating Thumbnail (Self):** `absolute top-4 right-4 w-28 h-40 bg-slate-800 rounded-xl border-2 border-white/20 shadow-lg overflow-hidden`
+* **Toolbar Pill:** `bg-slate-900/90 backdrop-blur-md rounded-full px-4 py-3 flex items-center justify-center gap-4 mx-auto border border-white/10`
+  * Mic / Cam: `w-11 h-11 rounded-full bg-slate-800 flex items-center justify-center` with vector SVG icons
+  * End Call: `w-11 h-11 rounded-full bg-rose-600 text-white flex items-center justify-center` with vector SVG phone/close icon
 
 ---
 
-### F. Community Service Hours Summary (Tutor Export)
-* Clean, document-style card suitable for on-screen review and PDF/print export:
-  * Official Header: University / School Community Engagement Header.
-  * Tutor info: Full Name, Student ID / Year Level, Total Hours Completed.
-  * Verifiable Log Table: Date, Student Name, Subject, Duration (Hours).
-  * Certification disclaimer & signature line placeholder for academic advisor verification.
+## 6. UI/UX Implementation Checklist
 
----
-
-## 4. UI/UX Planning & Implementation Checklist
-
-When implementing new components as the team finalizes designs:
-
-- [ ] Tested on a standard mobile width ($360\text{px}$–$430\text{px}$).
-- [ ] No horizontal screen jitter or overflow.
-- [ ] Bottom navigation bar clearance (`pb-24`) included on scrollable views.
+- [ ] Tested on standard mobile screen widths ($360\text{px}$–$430\text{px}$).
+- [ ] No horizontal screen jitter or overflow (`overflow-x-hidden`).
+- [ ] Bottom navigation bar clearance (`pb-24`) included on all scrollable views.
 - [ ] Touch targets $\ge 44\text{px}$ on buttons and interactive chips.
-- [ ] Color tokens conform to the Indigo/Slate/Emerald/Amber palette.
-- [ ] Status pills match the state machine (`pending`, `confirmed`, `completed`).
-- [ ] Feedback indicators (loading spinners, disabled button states) prevent double-taps.
-- [ ] Layout easily adapts as the team supplies updated Figma or visual design assets.
+- [ ] Color tokens strictly adhere to **Ocean Breeze** (Sky 600, Sky 500, Slate 900, Slate 50).
+- [ ] **Vector Iconography:** Clean vector SVGs or Font Awesome used for all navigation tabs, header actions, buttons, and status indicators (strictly NO raw Unicode emojis in UI code).
+- [ ] Status pills match state machine (`pending`, `confirmed`, `declined`, `completed`, `cancelled`) with vector status icons.
+- [ ] Feedback indicators (loading spinners, disabled button states) prevent duplicate actions.

@@ -1,13 +1,13 @@
 ---
 name: planning
-description: Create structured implementation plans, module workflows, feature breakdowns, and development roadmaps for MentorLink (Mentorship & Tutoring Matching Application). Use when planning a new module, page, feature, or enhancement before coding.
+description: Create structured implementation plans, module workflows, feature breakdowns, and development roadmaps for MentorLinks (Mentorship & Tutoring Matching Application). Use when planning a new module, page, feature, or enhancement before coding.
 ---
 
-# Planning Skill (MentorLink)
+# Planning Skill (MentorLinks)
 
 ## Goal
 
-Produce thorough, highly structured, and production-ready implementation plans before writing any code or modifying database schemas for **MentorLink — Mentorship & Tutoring Matching Application**.
+Produce thorough, highly structured, and production-ready implementation plans before writing any code or modifying database schemas for **MentorLinks — Mentorship & Tutoring Matching Application** (*"Connect. Learn. Grow."*).
 
 ---
 
@@ -15,24 +15,27 @@ Produce thorough, highly structured, and production-ready implementation plans b
 
 1. **Universal Mandate — Always Send an Implementation Plan:** Never write or modify source code without first submitting a clear, structured implementation plan and receiving explicit user approval.
 2. **Zero AI Slop & Human-Grade Craftsmanship:**
-   * Reject generic, shallow boilerplate, incomplete stubs, and lazy placeholder comments (`// TODO: add code here`).
-   * Every planned component, hook, and database interaction must be fully specified and complete.
+   * Reject generic boilerplate, incomplete stubs, and lazy placeholder comments (`// TODO: add code here`).
+   * Every planned component, hook, and database interaction must be fully specified, functional, and complete.
 3. **Mobile-First App Constraints:**
-   * Every screen must be designed for a mobile viewport (360px–430px) with touch-friendly targets ($\ge 44\text{px}$).
-   * Mobile ergonomics: Persistent bottom navigation (`Home`, `Search`, `Sessions`, `Profile`), mobile headers, back buttons, and safe-area insets.
+   * Every screen must be designed for a mobile viewport ($360\text{px}$–$430\text{px}$) with touch-friendly targets ($\ge 44\text{px}$).
+   * Mobile ergonomics: Persistent 5-tab bottom navigation (`pb-24` clearance), mobile headers, back buttons, and safe-area insets (`pt-safe`, `pb-safe`).
    * Native container compatibility: Code must cleanly bundle via `npm run build` and sync with Capacitor for Android Studio compilation.
 4. **Strict Technology Stack Adherence:** Plan strictly within:
    * React.js (Vite)
-   * Tailwind CSS
+   * Tailwind CSS v4 using **Ocean Breeze** design tokens (`#0284c7`, `#0ea5e9`, `#06b6d4`, `#0f172a`, `#f8fafc`)
    * Vanilla JavaScript (ES6+ modules)
    * Capacitor Android Container (`@capacitor/android`)
-   * Supabase PostgreSQL with 100% Row Level Security (RLS)
+   * Supabase PostgreSQL with 100% Row Level Security (RLS) across 11 normalized tables
    * Companion APK download website (standalone single-page showcase)
-5. **Scope Integrity:**
-   * Direct-pay session fee tracking only (or volunteer ₱0).
-   * University Community Service Hours accreditation for tutors.
-   * No AI wrappers, no complex token systems, no browser-only fallback for the app.
-6. **Cross-Role Lifecycle Analysis:** Every plan must evaluate effects across both **Student** and **Tutor** perspectives (e.g., student booking creation $\rightarrow$ tutor calendar conflict check $\rightarrow$ payment confirmation $\rightarrow$ service hours credit).
+   * Vector Iconography: Scalable inline SVGs or Font Awesome icons (strictly NO raw Unicode emojis in UI component implementation)
+5. **Scope Integrity & Divided Role Directives:**
+   * Validate Student flows against [`docs/student_flow_spec.md`](file:///c:/Users/jaync/Desktop/Mentorship%20Tutoring%20App/MentorshipTutoringApp/docs/student_flow_spec.md).
+   * Validate Mentor flows against [`docs/mentor_flow_spec.md`](file:///c:/Users/jaync/Desktop/Mentorship%20Tutoring%20App/MentorshipTutoringApp/docs/mentor_flow_spec.md).
+   * Direct-pay session fee tracking only (or volunteer ₱0.00).
+   * In-App Messaging and Virtual Classroom meeting environments.
+   * University Community Service Hours accreditation for mentors.
+6. **Cross-Role Lifecycle Analysis:** Every plan must evaluate effects across both **Student** and **Mentor** perspectives (e.g., student booking creation $\rightarrow$ mentor notification $\rightarrow$ accept or decline with reason $\rightarrow$ payment confirmation $\rightarrow$ virtual classroom $\rightarrow$ service hours credit).
 
 ---
 
@@ -40,23 +43,23 @@ Produce thorough, highly structured, and production-ready implementation plans b
 
 ```
    ┌───────────────────────┐
-   │ 1. SCOPE & ACTORS     │ ── Define user stories for Student vs. Tutor
+   │ 1. SCOPE & ACTORS     │ ── Cross-reference student_flow_spec.md & mentor_flow_spec.md
    └──────────┬────────────┘
               ▼
    ┌───────────────────────┐
-   │ 2. MOBILE FLOW & NAV  │ ── Map screens, bottom nav, modals, & touch actions
+   │ 2. MOBILE FLOW & NAV  │ ── Map dual 5-tab screens, modals, & touch actions
    └──────────┬────────────┘
               ▼
    ┌───────────────────────┐
-   │ 3. UI/UX BENCHMARK    │ ── Match Tailwind mobile components & layout guidelines
+   │ 3. UI/UX BENCHMARK    │ ── Match Ocean Breeze design tokens & pb-24 clearance
    └──────────┬────────────┘
               ▼
    ┌───────────────────────┐
-   │ 4. DATABASE & RLS     │ ── Map tables, columns, indexes, & non-destructive DDL
+   │ 4. DATABASE & RLS     │ ── Map 11 tables, columns, indexes, & non-destructive DDL
    └──────────┬────────────┘
               ▼
    ┌───────────────────────┐
-   │ 5. SECURITY & ACCESS  │ ── Plan RLS rules, role checks, and payment verification
+   │ 5. SECURITY & ACCESS  │ ── Plan RLS rules, role checks, and meeting auth guards
    └──────────┬────────────┘
               ▼
    ┌───────────────────────┐
@@ -65,26 +68,30 @@ Produce thorough, highly structured, and production-ready implementation plans b
 ```
 
 ### Step 1 — Scope & Actor Identification
-* Identify user stories for Student (finding help, scheduling, paying, reviewing) and Tutor (availability, accepting, confirming payment, notes, service hours).
+* Identify user stories for Student (finding help, scheduling, paying, real-time chat, joining classroom, reviewing) and Mentor (availability, accepting/declining requests, confirming payment, hosting classroom, notes, service hours).
 * Verify boundaries: Ensure students cannot approve their own sessions or credit their own service hours.
 
 ### Step 2 — Mobile Flow & Navigation Mapping
-* Map screen routing (`/search`, `/tutor/:id`, `/booking/:tutorId`, `/sessions`, `/tutor/schedule`, `/tutor/service-hours`).
-* Define interaction states: Loading skeletons, empty states ("No upcoming sessions"), error toasts, and bottom sheet dialogs.
+* Map screen routing across the dual 5-tab architecture:
+  - Student: `Home`, `Explore`, `Messages`, `Sessions`, `Profile`.
+  - Mentor: `Home`, `Students`, `Messages`, `Sessions`, `Profile`.
+* Define interaction states: Loading skeletons, empty states, error toasts, and bottom sheet dialogs.
 
 ### Step 3 — UI/UX Design System Mapping
-* Use mobile-tailored Tailwind utility classes.
-* Ensure bottom navigation spacing (`pb-20` to prevent content overlap).
-* Use the design system defined in `.agent/skills/ui-ux/SKILL.md`.
+* Use Ocean Breeze design tokens: Primary Sky (`#0284c7`), Accent Sky (`#0ea5e9`), Cyan (`#06b6d4`), Deep Navy (`#0f172a`), Surface White (`#ffffff`), Canvas (`#f8fafc`).
+* **Vector Iconography:** Specify vector SVGs or Font Awesome icons for all buttons, navigation tabs, header actions, and status badges. Strictly prohibit raw Unicode emojis in UI component implementation.
+* Ensure bottom navigation spacing (`pb-24` or `.bottom-nav-clearance` to prevent content overlap).
+* Ensure touch targets $\ge 44 \times 44\text{px}$.
 
 ### Step 4 — Database & RLS Impact Analysis
-* Confirm affected tables: `profiles`, `tutor_profiles`, `tutor_subjects`, `tutor_availability`, `sessions`, `service_hour_logs`, `reviews`.
+* Confirm affected tables out of the 11 normalized tables (`profiles`, `tutor_profiles`, `tutor_subjects`, `tutor_availability`, `sessions`, `service_hour_logs`, `reviews`, `conversations`, `messages`, `support_tickets`, `notification_preferences`).
 * Formulate exact PostgreSQL RLS policies ensuring secure multi-tenant access.
-* Specify non-destructive DDL (`ADD COLUMN IF NOT EXISTS`, `CREATE INDEX IF NOT EXISTS`).
+* Specify non-destructive DDL (`ADD COLUMN IF NOT EXISTS`, `CREATE TABLE IF NOT EXISTS`, `CREATE INDEX IF NOT EXISTS`).
 
 ### Step 5 — Security & Data Integrity Audit Plan
 * Plan client input validation (sanitizing text fields, dates, rates).
-* Enforce payment flow safety: Only tutors can mark `payment_status = confirmed`.
+* Enforce payment flow safety: Only mentors can mark `payment_status = confirmed`.
+* Enforce decline reason requirement when mentor rejects a request.
 * Enforce service hours integrity: Only sessions with `counts_toward_service_hours = true` reaching `status = completed` generate logs.
 
 ### Step 6 — Phased Implementation Roadmap
@@ -101,7 +108,7 @@ Produce thorough, highly structured, and production-ready implementation plans b
 When generating an implementation plan:
 
 1. **Feature Title & Objectives:** Clear statement of purpose and expected user benefits.
-2. **Actors & Permissions Matrix:** Capabilities of Student vs. Tutor for this feature.
+2. **Actors & Permissions Matrix:** Capabilities of Student vs. Mentor for this feature.
 3. **User Flow & Sequence Diagram:** Mermaid sequence diagram illustrating the mobile interaction flow.
 4. **Mobile UI & Screen Mapping:** List of screens, route paths, and component layout structure.
 5. **File Modification Plan:** Categorized as `[NEW]`, `[MODIFY]`, or `[DELETE]` with clickable links (`file:///...`).

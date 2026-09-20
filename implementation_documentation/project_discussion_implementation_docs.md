@@ -1,18 +1,23 @@
-# MentorLink — Technical Implementation & Project Discussion Documentation
+# MentorLinks — Technical Implementation & Project Discussion Documentation
 
-**Project Title:** MentorLink — Mentorship & Tutoring Matching Mobile Application  
+> [!NOTE]
+> **Architecture Update Notice (September 20, 2026):**  
+> This initial discussion documentation has been superseded by the complete, release-synchronized implementation document: [`system_changes_and_implementation_docs.md`](file:///c:/Users/jaync/Desktop/Mentorship%20Tutoring%20App/MentorshipTutoringApp/implementation_documentation/system_changes_and_implementation_docs.md), which includes the divided role specifications (`student_flow_spec.md`, `mentor_flow_spec.md`), the 42-screen layout from `mobile_contents_guide.md`, in-app messaging, virtual classroom, and the vector iconography standards.
+
+**Project Title:** MentorLinks — Mentorship & Tutoring Matching Mobile Application  
+**Tagline:** *"Connect. Learn. Grow."*  
 **Target Audience:** High School and College Students  
 **Runtime Environment:** Standalone Android APK (via Capacitor & Android Studio) + Companion APK Download Website  
 **Technology Stack:** React.js (Vite), Tailwind CSS v4, Vanilla JavaScript (ES6+), Capacitor (`@capacitor/android`), Supabase (PostgreSQL, Auth, RLS, Storage, Realtime)  
-**Target Location:** `docs/implementation_documentation.md`  
-**Version:** 1.0  
-**Date:** September 17, 2026  
+**Target Location:** `implementation_documentation/project_discussion_implementation_docs.md`  
+**Version:** 1.0 (Historical Baseline)  
+**Date:** September 17, 2026 (Updated September 20, 2026)  
 
 ---
 
 ## 1. Executive Summary & Project Identity
 
-MentorLink is a peer-to-peer (P2P) academic mentorship and tutoring mobile application tailored for high school and college students. The platform bridges the gap between students needing academic support and qualified student mentors who want to earn income or accredit verifiable **University Community Service Hours**.
+MentorLinks is a peer-to-peer (P2P) academic mentorship and tutoring mobile application tailored for high school and college students. The platform bridges the gap between students needing academic support and qualified student mentors who want to earn income or accredit verifiable **University Community Service Hours**.
 
 ### 1.1 Core Principles & Non-Negotiable Boundaries
 1. **Pure Mobile Application Experience:**

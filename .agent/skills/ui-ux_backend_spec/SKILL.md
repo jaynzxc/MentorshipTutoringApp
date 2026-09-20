@@ -1,42 +1,39 @@
 ---
 name: ui-ux_backend_spec
-description: Backend specifications, API query shapes, payload contracts, loading/empty states, and Supabase real-time bindings powering MentorLink UI/UX components. Use when connecting frontend views to Supabase services.
+description: Backend specifications, API query shapes, payload contracts, loading/empty states, and Supabase real-time bindings powering MentorLinks UI/UX components. Use when connecting frontend views to Supabase services.
 ---
 
-# UI/UX Backend Specification Skill (MentorLink)
+# UI/UX Backend Specification Skill (MentorLinks)
 
 ## Goal
 
-Provide a concrete, standardized contract between the **React Mobile UI Components** and the **Supabase Backend Services** for **MentorLink**. This ensures frontend developers and AI agents know the exact data shapes, queries, mutations, loading states, and error handling required for every screen.
-
-> [!NOTE]
-> **Status: Aligned with Ongoing Planning Phase**  
-> This specification matches our current architecture, schema, and brainstorming foundations. As your team finalizes specific Figma layouts, visual fields, and wireframes, this specification will be revised to reflect the final UI inputs and outputs.
+Provide a standardized contract between the **React Mobile UI Components** (5-tab dual architecture, Ocean Breeze theme) and the **Supabase Backend Services** for **MentorLinks — Mentorship & Tutoring Matching Application** (*"Connect. Learn. Grow."*).
 
 ---
 
 ## 1. Architectural Service Pattern
 
-All UI components interact with Supabase through a centralized, modular service layer located in `src/services/`. Direct database calls inside React UI components are prohibited.
+All UI components interact with Supabase through a centralized service layer located in `src/services/`. Direct database calls inside React UI components are prohibited.
 
 ```
-┌───────────────────────────────┐
-│     React Mobile UI Screen    │
-│  - Loading Skeleton / State   │
-│  - Form inputs & Touch events │
-└──────────────┬────────────────┘
-               │ Calls service function
-               ▼
-┌───────────────────────────────┐
-│     src/services/*.js         │  <-- Standardized contract { data, error }
-│  - Query building & filtering │
-│  - Payload sanitization       │
-└──────────────┬────────────────┘
-               │ Supabase JS SDK (HTTPS / WSS)
-               ▼
-┌───────────────────────────────┐
-│   Supabase PostgreSQL & RLS   │
-└───────────────────────────────┘
+┌────────────────────────────────┐
+│     React Mobile UI Screen     │
+│  - Ocean Breeze design tokens  │
+│  - Loading Skeleton / State    │
+│  - Form inputs & Touch events  │
+└───────────────┬────────────────┘
+                │ Calls service function
+                ▼
+┌────────────────────────────────┐
+│      src/services/*.js         │  <-- Standardized contract { data, error }
+│  - Query building & filtering  │
+│  - Payload sanitization        │
+└───────────────┬────────────────┘
+                │ Supabase JS SDK (HTTPS / WSS Realtime)
+                ▼
+┌────────────────────────────────┐
+│   Supabase PostgreSQL & RLS    │
+└────────────────────────────────┘
 ```
 
 ### Standard Service Response Convention
@@ -50,257 +47,124 @@ Every service function returns a standardized promise resolving to:
 
 ---
 
-## 2. Screen-by-Screen Backend Specifications
+## 2. Screen-by-Screen Query Shapes & Contracts
 
-### Screen 1: Tutor Discovery & Search (`FindTutorScreen.jsx`)
-
-* **UI Purpose:** Search bar, subject category chips, grade level selector, rate filters, and infinite-scrolling tutor cards.
-* **Backend Function:** `tutorService.searchTutors(filters, page = 1, pageSize = 10)`
-* **Supabase Query:**
-  ```javascript
-  let query = supabase
-    .from('tutor_profiles')
-    .select(`
-      tutor_id,
-      hourly_rate,
-      headline,
-      average_rating,
-      completed_sessions_count,
-      is_accepting_students,
-      profiles:tutor_id (
-        full_name,
-        avatar_url,
-        school_name,
-        education_level
-      ),
-      tutor_subjects!inner (
-        id,
-        subject_name,
-        category,
-        grade_level
-      )
-    `)
-    .eq('is_accepting_students', true);
-  ```
-* **Payload / Filters from UI:**
+### Student Tab 1: Home Overview (`StudentHomeScreen.jsx`)
+* **Service Method:** `sessionService.getStudentHomeOverview(studentId)`
+* **Data Contract:**
   ```json
   {
-    "searchQuery": "calculus",
-    "gradeLevel": "college",
-    "isVolunteerOnly": false,
-    "maxRate": 250.00
-  }
-  ```
-* **UI State Requirements:**
-  * `isLoading`: Render 3 animated mobile skeleton cards (`animate-pulse`).
-  * `isEmpty`: Display illustration + *"No tutors found for 'Calculus'. Try clearing your filters."*
-  * `isError`: Show error banner with a *"Tap to retry"* button.
-
----
-
-### Screen 2: Tutor Profile & Slot Picker (`TutorProfileScreen.jsx`, `SlotPickerModal.jsx`)
-
-* **UI Purpose:** Tutor bio, credentials, list of subjects taught, student reviews, and weekly calendar slot picker.
-* **Backend Functions:**
-  * `tutorService.getTutorDetails(tutorId)`
-  * `tutorService.getTutorAvailability(tutorId, selectedDate)`
-* **Output Data Contract to UI:**
-  ```json
-  {
-    "tutor_id": "uuid",
-    "full_name": "Maria Santos",
-    "school_name": "College of Engineering",
-    "education_level": "college",
-    "headline": "Junior BS Math | Calculus & Physics Tutor",
-    "hourly_rate": 150.00,
-    "total_service_hours": 14.5,
-    "average_rating": 4.9,
-    "completed_sessions_count": 18,
-    "subjects": [
-      { "id": "uuid-1", "subject_name": "Calculus 1", "category": "Math" },
-      { "id": "uuid-2", "subject_name": "General Physics", "category": "Science" }
-    ],
-    "availableSlots": [
-      { "time": "09:00", "end_time": "10:00", "isBooked": false },
-      { "time": "10:00", "end_time": "11:00", "isBooked": true }
-    ],
-    "recentReviews": [
-      { "student_name": "John D.", "rating": 5, "comment": "Explains derivatives very clearly!" }
-    ]
-  }
-  ```
-* **UI State Requirements:**
-  * Booked slots rendered disabled (`opacity-40 cursor-not-allowed`).
-  * Selected slot highlighted in active brand color (`bg-indigo-600 text-white`).
-
----
-
-### Screen 3: Booking Initiation & Direct Payment (`BookSessionScreen.jsx`)
-
-* **UI Purpose:** Student selects topic/homework prompt, picks online meeting or campus room, reviews payment total, and enters direct payment reference.
-* **Backend Functions:**
-  1. `sessionService.createBooking(bookingPayload)`
-  2. `sessionService.submitPaymentReference(sessionId, referenceNumber)`
-* **Step 1 — Create Booking Payload (from UI):**
-  ```json
-  {
-    "tutor_id": "uuid",
-    "subject_id": "uuid",
-    "scheduled_start": "2026-09-20T10:00:00+08:00",
-    "scheduled_end": "2026-09-20T11:00:00+08:00",
-    "duration_hours": 1.0,
-    "meeting_type": "online",
-    "meeting_link_or_location": "Google Meet",
-    "session_topic": "Chain Rule & Implicit Differentiation HW",
-    "payment_type": "direct_pay",
-    "payment_amount": 150.00,
-    "counts_toward_service_hours": false
-  }
-  ```
-* **Step 2 — Submit Payment Reference Payload (from UI):**
-  ```json
-  {
-    "sessionId": "uuid",
-    "payment_reference": "GCASH-98410284"
-  }
-  ```
-* **Backend Transition:** Updates `payment_status` from `unpaid` to `payment_submitted`.
-* **UI Feedback:** Modal confirms submission: *"Payment reference submitted. Tutor will verify and confirm your session!"*
-
----
-
-### Screen 4: My Sessions Dashboard (`MySessionsScreen.jsx`, `SessionCard.jsx`)
-
-* **UI Purpose:** Tabs for `Upcoming`, `Pending`, and `Completed` sessions for both Student and Tutor.
-* **Backend Function:** `sessionService.getUserSessions(role = 'student', statusFilter = 'upcoming')`
-* **Data Contract to UI:**
-  ```json
-  [
-    {
+    "stats": { "total_sessions": 8, "active_mentors": 3, "hours_learned": 12.0 },
+    "next_session": {
       "id": "session-uuid",
-      "subject_name": "Calculus 1",
-      "scheduled_start": "2026-09-20T10:00:00+08:00",
-      "scheduled_end": "2026-09-20T11:00:00+08:00",
+      "mentor_name": "Maria Santos",
+      "mentor_avatar": "...",
+      "subject": "Calculus 1",
+      "scheduled_start": "2026-09-20T14:00:00+08:00",
       "status": "confirmed",
-      "payment_status": "confirmed",
-      "payment_amount": 150.00,
-      "meeting_type": "online",
-      "meeting_link_or_location": "https://meet.google.com/abc-defg-hij",
-      "session_topic": "Chain Rule Review",
-      "other_party": {
-        "id": "uuid",
-        "full_name": "Maria Santos",
-        "avatar_url": "...",
-        "school_name": "Engineering Dept"
-      },
-      "session_notes": "Reviewed implicit differentiation. Next: Related Rates."
-    }
-  ]
-  ```
-* **Tutor Action Handlers:**
-  * `sessionService.confirmPaymentAndAccept(sessionId)` $\rightarrow$ `status = 'confirmed'`, `payment_status = 'confirmed'`.
-  * `sessionService.markSessionCompleted(sessionId)` $\rightarrow$ `status = 'completed'`.
-
----
-
-### Screen 5: Post-Session Notes Pad (`SessionNotesPad.jsx`)
-
-* **UI Purpose:** Slide-up drawer or full-screen editor where tutor records key study takeaways and homework review for the student.
-* **Backend Function:** `sessionService.updateSessionNotes(sessionId, notesText)`
-* **Payload:** `{ "sessionId": "uuid", "session_notes": "Covered 5 derivative exercises..." }`
-* **UI Feedback:** Toast alert: *"Session notes saved successfully."* Student can view read-only in their session history.
-
----
-
-### Screen 6: University Community Service Hours (`ServiceHoursScreen.jsx`)
-
-* **UI Purpose:** Tutor dashboard view displaying accredited volunteer hours, verified log entries, and an export button for school accreditation.
-* **Backend Function:** `serviceHourService.getTutorServiceHours(tutorId)`
-* **Data Contract to UI:**
-  ```json
-  {
-    "total_accredited_hours": 24.0,
-    "logs": [
+      "can_join": true
+    },
+    "recommended_mentors": [
       {
-        "id": "log-uuid",
-        "session_id": "session-uuid",
-        "subject_name": "Basic Programming",
-        "hours_credited": 2.0,
-        "verified_at": "2026-09-18T14:30:00+08:00",
-        "student_name": "Carlos Gomez",
-        "school_name": "High School Dept"
+        "tutor_id": "mentor-uuid",
+        "name": "David Reyes",
+        "headline": "BS CS Senior | Python & DSA Mentor",
+        "rate": 0.00,
+        "is_volunteer": true,
+        "rating": 4.95,
+        "sessions_count": 28
       }
     ]
   }
   ```
-* **Export Payload:** Generates a clean, print-friendly browser document containing student name, academic terms, dates, subject, hours, and signature line for the University Community Engagement Office.
 
----
-
-### Screen 7: Peer Review & Rating Modal (`RateSessionModal.jsx`)
-
-* **UI Purpose:** 5-star interactive rating picker + optional feedback text field shown after session completion.
-* **Backend Function:** `reviewService.submitReview(reviewPayload)`
-* **Payload:**
+### Student Tab 2: Explore Mentors (`ExploreScreen.jsx`)
+* **Service Method:** `tutorService.searchMentors(filters, page = 1, pageSize = 10)`
+* **Filters Payload:**
   ```json
   {
-    "session_id": "uuid",
-    "tutor_id": "uuid",
-    "rating": 5,
-    "comment": "Very helpful and on time!"
-  }
-  ```
-* **Backend Trigger:** Automatically updates `average_rating` and increments `completed_sessions_count` in `tutor_profiles`.
-* **UI Feedback:** Close modal $\rightarrow$ session card reflects "Reviewed ⭐ 5/5".
-
----
-
-### Screen 8: Dual-Role Mode Switcher & Profile (`ProfileScreen.jsx`)
-
-* **UI Purpose:** Switch between **Learner Mode** and **Mentor Dashboard**, manage profile info, or register as a peer tutor.
-* **Backend Functions:**
-  * `authService.getCurrentUserProfile()`
-  * `tutorService.registerAsTutor(tutorSetupPayload)`
-* **State Contract:**
-  ```json
-  {
-    "id": "user-uuid",
-    "full_name": "Alex Cruz",
-    "is_tutor": true,
-    "active_mode": "student" // or "tutor" (stored in React AppContext)
+    "query": "algebra",
+    "category": "Math",
+    "maxRate": 200,
+    "isVolunteerOnly": false,
+    "gradeLevel": "college",
+    "sortBy": "rating_desc"
   }
   ```
 
+### Dual Tab 3: Messages & Conversations (`MessagesScreen.jsx`, `ChatDetailScreen.jsx`)
+* **Service Methods:**
+  * `messageService.getConversations(userId)`
+  * `messageService.getMessages(conversationId)`
+  * `messageService.sendMessage({ conversationId, senderId, text, sessionId })`
+* **Message Object Contract:**
+  ```json
+  {
+    "id": "msg-uuid",
+    "conversation_id": "conv-uuid",
+    "sender_id": "user-uuid",
+    "message_text": "Looking forward to our session at 2 PM!",
+    "session_id": "session-uuid-optional",
+    "is_read": true,
+    "created_at": "2026-09-20T11:45:00+08:00"
+  }
+  ```
+
+### Dual Tab 4: Sessions Management
+* **Student Sessions:** `sessionService.getStudentSessions(studentId, filter)`
+  * Filter: `'upcoming' | 'completed' | 'cancelled'`
+* **Mentor Sessions:** `sessionService.getMentorSessions(mentorId, filter)`
+  * Filter: `'upcoming' | 'requests' | 'completed'`
+* **Action Handlers:**
+  * `sessionService.submitPaymentReference(sessionId, referenceNumber)`
+  * `sessionService.acceptBooking(sessionId)` $\rightarrow$ updates `status = 'confirmed'`, `payment_status = 'confirmed'`
+  * `sessionService.declineBooking(sessionId, declineReason)` $\rightarrow$ updates `status = 'declined'`, `decline_reason = declineReason`
+  * `sessionService.markSessionCompleted(sessionId, sessionNotes)` $\rightarrow$ triggers server-side community service hours auto-credit.
+
+### Dual Tab 5: Profile & Settings
+* **Student Profile:** `authService.getStudentProfile(studentId)`
+  * Includes `learning_interests`, `learning_progress` metrics, and `notification_preferences`.
+* **Mentor Profile:** `tutorService.getMentorProfile(mentorId)`
+  * Includes `total_service_hours`, `hourly_rate`, `availability_slots`, `service_hour_logs`.
+* **Export Accreditation:** `reportService.generateServiceHoursSummary(mentorId)`
+  * Returns formatted data structure for print/PDF export for University Community Engagement Offices.
+
 ---
 
-## 3. Real-Time Synchronization Specs
+## 3. In-App Virtual Classroom Specifications (`VirtualClassroomScreen.jsx`)
 
-To provide a native, responsive mobile experience without manual pull-to-refresh:
-
-1. **Session Status Channel:**
-   * Subscribe to changes on `sessions` filtered by user:
-     ```javascript
-     supabase
-       .channel(`user-sessions-${userId}`)
-       .on('postgres_changes', {
-         event: 'UPDATE',
-         schema: 'public',
-         table: 'sessions',
-         filter: `student_id=eq.${userId}`
-       }, (payload) => {
-         // Auto-update UI when tutor confirms booking or payment
-         updateSessionState(payload.new);
-       })
-       .subscribe();
-     ```
-2. **Tutor Incoming Requests Channel:**
-   * Tutors listen to new incoming booking requests (`event: 'INSERT'`).
+* **Access Guard:** Can only be joined when `status = 'confirmed'` AND current time is within **10 minutes** before `scheduled_start` through `scheduled_end + 30 minutes`.
+* **Meeting Payload:**
+  ```json
+  {
+    "sessionId": "session-uuid",
+    "currentUserRole": "student",
+    "meetingState": {
+      "micMuted": false,
+      "cameraOn": true,
+      "screenSharing": false
+    }
+  }
+  ```
+* **Notes Drawer:** Tutors can draft real-time study pointers that commit directly to `sessions.session_notes` upon call termination.
 
 ---
 
-## 4. Developer & Agent Implementation Rules
+## 4. Real-Time Supabase Bindings
 
-1. **Keep UI Decoupled:** Components only read props/hooks and emit events. All Supabase calls live inside `src/services/`.
-2. **Handle All 3 Core States:** Every query-dependent screen must explicitly implement **Loading**, **Empty**, and **Error** states.
-3. **Optimistic Updates Where Appropriate:** For session notes and rating submissions, update the local React state immediately for instant feedback, reverting if the API returns an error.
-4. **Coordinate with UI/UX Design Iterations:** When the design team introduces new wireframes or fields, update this document and the corresponding `src/services/` contracts first before writing UI code.
+1. **Messages Channel:**
+   ```javascript
+   supabase
+     .channel(`conversation-${conversationId}`)
+     .on('postgres_changes', {
+       event: 'INSERT',
+       schema: 'public',
+       table: 'messages',
+       filter: `conversation_id=eq.${conversationId}`
+     }, (payload) => {
+       appendNewMessage(payload.new);
+     })
+     .subscribe();
+   ```
+2. **Session Status Channel:**
+   * Automatically reflects when a mentor confirms, declines, or completes a booking.

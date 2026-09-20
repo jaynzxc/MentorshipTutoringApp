@@ -1,76 +1,73 @@
-# MentorLink — Product Requirements Document (PRD)
+# MentorLinks — Product Requirements Document (PRD)
 
-**Project Title:** MentorLink — Mentorship & Tutoring Matching Mobile Application  
+**Project Title:** MentorLinks — Peer Mentorship & Tutoring Mobile Application  
+**Tagline:** Connect. Learn. Grow.  
 **Target Audience:** High School and College Students  
-**Document Version:** 1.0  
+**Document Version:** 2.0 (Aligned with `docs/mobile_contents_guide.md`)  
 **Status:** Approved for Implementation  
-**Tech Stack:** React.js (Vite), Tailwind CSS, Capacitor (`@capacitor/android`), Supabase (PostgreSQL & Auth), Android Studio  
+**Tech Stack:** React.js (Vite), Tailwind CSS v4, Capacitor (`@capacitor/android`), Supabase (PostgreSQL, Auth, Realtime, Storage), Android Studio  
+**Design Theme:** Ocean Breeze (`#0284c7`, `#0ea5e9`, `#06b6d4`, `#0f172a`, `#ffffff`, `#f0f9ff`)  
 
 ---
 
 ## 1. Executive Summary & Product Vision
 
 ### 1.1 Product Vision
-**MentorLink** is a mobile-first peer mentorship and tutoring matching application designed specifically for high school and college students. The platform bridges the gap between students needing academic assistance and qualified peer students who want to share knowledge, earn direct income, or accredit verifiable **University Community Service Hours**.
+**MentorLinks** is a mobile-first peer mentorship and tutoring matching application designed specifically for high school and college students. The platform bridges the gap between students needing academic guidance and qualified peer mentors who want to share knowledge, earn income, or accredit verifiable **University Community Service Hours**.
 
 ### 1.2 Core Philosophy
 1. **Pure Mobile Application:** Engineered specifically for mobile screens ($360\text{px}$–$430\text{px}$) and packaged as an installable **Android APK** via Capacitor and Android Studio.
-2. **Simplified Economic Model:** Direct pay only. Tutors set their rates (or volunteer ₱0.00), and students transfer payments directly (e.g., GCash, Maya, cash) and submit transaction references.
-3. **Non-Monetary Incentive:** Built-in tracking and export of **University Community Service Hours** for academic volunteer credit.
-4. **Human-Centric & No Bloat:** Focused strictly on matching, scheduling, payment tracking, study notes, and accreditation—omitting premature AI wrappers or barter token systems.
-5. **Distribution:** Distributed via a companion single-page **APK Download Website**.
+2. **Role-Specific 5-Tab Architecture:** Clean, specialized navigation tailored to the user's registered role:
+   - **Student Navigation:** `🏠 Home` | `🔍 Explore` | `💬 Messages` | `📅 Sessions` | `👤 Profile`
+   - **Mentor Navigation:** `🏠 Home` | `👥 Students` | `💬 Messages` | `📅 Sessions` | `👤 Profile`
+3. **Interactive Virtual Classroom:** In-app meeting room with live video/camera toggle, microphone controls, screen sharing, real-time meeting chat, and live session study notes.
+4. **Direct In-App Messaging:** Persistent chat system with conversation search, unread badges, and an embedded *Session Shortcut Card* connecting chat threads directly to active bookings.
+5. **Simplified Economic & Community Service Model:** Direct peer pay (GCash/Maya/Cash) or ₱0 Volunteer tutoring that automatically accrues accredited University Community Service Hours.
+6. **Detailed Flow References:**
+   - Detailed Student Specification: [`docs/student_flow_spec.md`](file:///c:/Users/jaync/Desktop/Mentorship%20Tutoring%20App/MentorshipTutoringApp/docs/student_flow_spec.md)
+   - Detailed Mentor Specification: [`docs/mentor_flow_spec.md`](file:///c:/Users/jaync/Desktop/Mentorship%20Tutoring%20App/MentorshipTutoringApp/docs/mentor_flow_spec.md)
 
 ---
 
 ## 2. Problem Statement & Opportunities
 
 ### 2.1 The Problems
-* **High Cost of Professional Tutoring:** Traditional commercial tutoring centers and private services charge rates that are unaffordable for average high school and college students.
-* **Relatability Gap:** Professional instructors often teach with rigid syllabi, whereas near-peer mentors understand exact course nuances, teachers' testing styles, and typical student stumbling blocks.
-* **Tutor Availability Friction:** Student tutors have fluctuating schedules; without a centralized slot management and direct booking system, scheduling across messaging apps is chaotic.
-* **Lack of Formal Volunteer Recognition:** Many college students willingly tutor younger peers but lack official, verifiable records to submit for departmental community service requirements.
+* **High Cost of Professional Tutoring:** Commercial tutoring centers charge rates that are unaffordable for high school and college students.
+* **Relatability Gap:** Professional instructors often teach with rigid syllabi, whereas near-peer mentors understand exact course nuances and student stumbling blocks.
+* **Tutor Availability Friction:** Student mentors have fluctuating schedules; without centralized slot management and calendar booking, scheduling across social apps is chaotic.
+* **Disjointed Learning Tools:** Students juggle multiple external apps for scheduling, meeting links, video calls, study notes, and messaging.
+* **Lack of Formal Volunteer Recognition:** Many college students tutor peers but lack official, verifiable records for departmental community service credit.
 
 ### 2.2 The Solution
-MentorLink solves these issues by providing a structured mobile app where:
-* Students search peer tutors by course code/subject, grade level, and rate.
-* Tutors define exact weekly recurring availability.
-* Direct payments are transparently recorded and verified by tutors.
-* Completed volunteer sessions automatically tally toward accredited Community Service Hours with exportable proof.
+MentorLinks solves these issues by providing a unified mobile ecosystem:
+* Students search peer mentors by subject, skill, availability, and rating.
+* Mentors define exact recurring weekly availability windows.
+* Direct in-app messaging keeps student-mentor discussions organized with embedded session shortcuts.
+* Built-in Virtual Classroom enables direct online mentoring sessions with notes.
+* Volunteer sessions automatically accumulate accredited Community Service Hours with exportable verification.
 
 ---
 
-## 3. User Personas & Roles
+## 3. User Roles & Navigation Shell
+
+Users explicitly select their account role upon registration (`I am a: ○ Student | ○ Mentor`):
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                             USER ROLE TAXONOMY                              │
-└─────────────────────────────────────────────────────────────────────────────┘
-                                      │
-                     ┌────────────────┴────────────────┐
-                     ▼                                 ▼
-      ┌─────────────────────────────┐   ┌─────────────────────────────┐
-      │      STUDENT (LEARNER)      │   │     PEER TUTOR (MENTOR)     │
-      │ - High school / College     │   │ - Qualified upperclassman   │
-      │ - Needs subject help        │   │ - Sets rate / ₱0 volunteer  │
-      │ - Books slots & pays direct │   │ - Accepts bookings & notes  │
-      │ - Rates peer tutor          │   │ - Accredits service hours   │
-      └─────────────────────────────┘   └─────────────────────────────┘
-                     ▲                                 ▲
-                     └──────── Dual-Role Profile ──────┘
-                        (Single account can toggle)
+                                  [REGISTRATION]
+                         Account Type: Student vs Mentor
+                                        │
+                    ┌───────────────────┴───────────────────┐
+                    ▼                                       ▼
+       ┌─────────────────────────┐             ┌─────────────────────────┐
+       │     STUDENT (LEARNER)   │             │   PEER TUTOR (MENTOR)   │
+       │  5-Tab Navigation:      │             │  5-Tab Navigation:      │
+       │  1. 🏠 Home             │             │  1. 🏠 Home             │
+       │  2. 🔍 Explore          │             │  2. 👥 Students         │
+       │  3. 💬 Messages         │             │  3. 💬 Messages         │
+       │  4. 📅 Sessions         │             │  4. 📅 Sessions         │
+       │  5. 👤 Profile          │             │  5. 👤 Profile          │
+       └─────────────────────────┘             └─────────────────────────┘
 ```
-
-### 3.1 Persona A: The Learner (Student)
-* **Demographics:** High school or college student needing academic unblocking in subjects like Calculus, Physics, Chemistry, or Programming.
-* **Key Goals:** Quickly find an affordable, relatable peer tutor available at specific times, book a session, attend, and review study notes.
-
-### 3.2 Persona B: The Mentor (Peer Tutor)
-* **Demographics:** Excelling high school senior or college student looking to earn pocket money or complete university-mandated community service hours.
-* **Key Goals:** List qualified subjects, establish open availability, receive structured bookings, confirm direct payments, and export certified service hour logs.
-
-### 3.3 Dual-Role Switcher (`is_tutor`)
-* A student can apply as a tutor using their existing account.
-* Once approved, the app header displays a mode toggle: **Learner Mode** $\longleftrightarrow$ **Mentor Dashboard**.
 
 ---
 
@@ -78,168 +75,53 @@ MentorLink solves these issues by providing a structured mobile app where:
 
 ### FR-1: Authentication & Onboarding
 * **FR-1.1 Email & Password Auth:** Secure signup and login powered by Supabase Auth with salted Bcrypt password hashing.
-* **FR-1.2 User Profile Setup:** Captures full name, school/institution, academic level (`high_school` or `college`), and bio.
-* **FR-1.3 Tutor Activation:** A user can tap "Become a Tutor" to fill in tutor-specific details: headline, hourly rate (or ₱0 volunteer), payment instructions (e.g., GCash number), and qualified subjects.
+* **FR-1.2 Role Selection:** Segmented selector during signup (`○ Student` vs `○ Mentor`).
+* **FR-1.3 Student Profile Setup:** Profile photo, school/university, course/program, year level (1st–4th Year, Graduate), short bio, and learning interests chips (Programming, Web Dev, UI/UX, Cybersecurity, Database, Mobile Dev, etc.).
+* **FR-1.4 Mentor Profile Setup:** Specialization tagline, expertise chips, years of experience, mentoring style, availability, and optional hourly rate.
 
-### FR-2: Tutor Discovery & Filtering
-* **FR-2.1 Subject & Keyword Search:** Search by exact subject or topic name (e.g., *Pre-Calculus, General Chemistry, Python*).
-* **FR-2.2 Multi-Criteria Filtering:**
-  * Academic Level: High School, College, or Both.
-  * Price: All, Volunteer Only (₱0), or Max Hourly Rate slider.
-  * Day of the Week: Filter tutors available on specific days.
-* **FR-2.3 Public Tutor Card:** Displays avatar, name, school name, rating (1–5 stars with session count), subjects taught, and rate/hour or "Volunteer" badge.
-* **FR-2.4 Tutor Detail Profile:** Detailed view showing full bio, academic experience, complete subject list, recurring availability grid, and past student reviews.
+### FR-2: Discovery, Explore & Mentor Profiles
+* **FR-2.1 Keyword & Category Search:** Search by mentor name, skill, expertise, or topic.
+* **FR-2.2 Multi-Criteria Filtering:** Filter modal with expertise checkboxes, session type (Online, In-Person, Both), availability (Today, This Week), and minimum rating (4.0+, 4.5+, 4.8+).
+* **FR-2.3 Mentor Profile View:** Bio, expertise tags, experience, mentoring style, availability preview, session duration, reviews, and action buttons (`[ 💬 Message ]` and `[ 📅 Book a Session ]`).
 
-### FR-3: Availability & Slot Booking
-* **FR-3.1 Recurring Availability Management:** Tutors define their weekly recurring availability windows (e.g., Mondays 15:00–18:00, Saturdays 09:00–12:00).
-* **FR-3.2 Slot Selection:** Students select a date and pick from available, unreserved 1-hour time blocks.
-* **FR-3.3 Booking Form:** Student specifies:
-  * Specific topic or homework question.
-  * Meeting preference: Online (with Google Meet / Zoom link) or In-Person (designated campus location).
-  * Agreed session rate (auto-calculated from duration $\times$ tutor rate).
-* **FR-3.4 Conflict Prevention:** Overlapping bookings for the same tutor slot are rejected at the database level.
+### FR-3: Booking Sub-flow & Session Requests
+* **FR-3.1 Date & Time Selection:** Interactive calendar highlighting available mentor days; slot selector (e.g. 6:00 PM, 7:00 PM) and duration pills (30, 45, 60 min).
+* **FR-3.2 Topic Input:** Student details specific learning questions or homework goals.
+* **FR-3.3 Review & Confirm:** Review booking details before dispatching request.
+* **FR-3.4 Request Processing (Mentor):** Mentor receives booking request with options to `[ Accept ]` (moves to Confirmed) or `[ Decline ]` (with reason selection: schedule conflict, time unavailable, etc.).
 
-### FR-4: Direct Payment Flow & Tracking
-* **FR-4.1 Simplified Direct Pay Model:** The platform does not hold escrow or charge processing fees.
-* **FR-4.2 Payment Submission:**
-  * For paid sessions, student transfers funds directly to the tutor (GCash, Maya, Bank, or Cash).
-  * Student enters the transaction Reference Number into the session view.
-  * Session status transitions to `payment_submitted`.
-* **FR-4.3 Tutor Verification:**
-  * Tutor receives the booking with the submitted Reference Number.
-  * After verifying funds in their personal wallet, the tutor taps **"Confirm Payment & Accept"**.
-  * Session status transitions to `confirmed`.
-* **FR-4.4 Volunteer Bypass:** If the tutor rate is ₱0.00, payment steps are bypassed and the booking confirms directly upon tutor acceptance.
+### FR-4: Active Sessions & Virtual Classroom
+* **FR-4.1 Confirmed Session Screen:** Shows session details, preparation checklist, and countdown (*"Session starts in X days"*).
+* **FR-4.2 Join Session Activation:** `[ 🎥 Join Session ]` CTA activates when the session is approaching or live.
+* **FR-4.3 Virtual Classroom Environment:**
+  * Video feeds: Large mentor video with picture-in-picture student video.
+  * Meeting controls: Mic mute/unmute, Camera on/off, Screen share toggle, Leave session.
+  * In-Meeting Chat: Slide-up panel for instant messaging and sharing code links.
+  * Session Notes: Live study takeaways recorded during session.
+* **FR-4.4 Session Completion:** Post-meeting summary card with mentor study notes, view session history, and message mentor buttons.
 
-### FR-5: Session Execution & Study Notes
-* **FR-5.1 Upcoming Session Card:** Displays countdown timer, scheduled date/time, subject, and direct button to launch meeting link or view meeting location.
-* **FR-5.2 Post-Session Notes Pad:**
-  * Tutor inputs key concepts covered, problem solutions, and study pointers.
-  * Saved notes become permanently accessible to the student in their session history for exam preparation.
-* **FR-5.3 Mark Completed:** Tutor marks the session as finished, triggering the review flow and community service hour accreditation.
+### FR-5: In-App Messaging System
+* **FR-5.1 Conversation Threads:** 1-on-1 direct messaging between students and mentors.
+* **FR-5.2 Conversation Search & Unread Indicators:** Real-time search and unread badges.
+* **FR-5.3 Embedded Session Shortcut Card:** Direct interactive card inside chat linking to confirmed upcoming sessions.
 
-### FR-6: University Community Service Hours Accreditation
-* **FR-6.1 Automated Credit Trigger:** When a volunteer session (`counts_toward_service_hours = true`) is marked `completed`, a database trigger automatically:
-  * Inserts an immutable verification record into `service_hour_logs`.
-  * Increments `total_service_hours` in `tutor_profiles`.
-* **FR-6.2 Service Hours Ledger:** Tutor dashboard displays total accredited hours and an itemized breakdown of completed mentoring sessions.
-* **FR-6.3 Verification Summary Export:** Generates an official printable/PDF-ready summary sheet with student names, dates, subjects, accredited hours, and signature line for university departmental approval.
+### FR-6: Learning Progress & University Service Hours
+* **FR-6.1 Student Learning Progress:** Overall completion metrics (sessions, hours mentored, skills explored, % progress bar) and individual skill progress bars.
+* **FR-6.2 Volunteer Service Hours Auto-Credit:** Automatic PostgreSQL trigger increments mentor `total_service_hours` and logs verifiable record in `service_hour_logs` upon completion of eligible volunteer sessions.
+* **FR-6.3 Verification Certificate Export:** Printable and PDF-ready summary sheet for departmental approval.
 
-### FR-7: Peer Reviews & Ratings
-* **FR-7.1 1–5 Star Rating:** Students rate completed sessions (1 to 5 stars) and optionally write feedback.
-* **FR-7.2 Single Review Per Session:** Enforced by database constraint `UNIQUE(session_id)`.
-* **FR-7.3 Auto-Recalculation:** Tutor’s average rating and total session counters update automatically upon review submission.
-* **FR-7.4 Anti-Self-Review:** Tutors cannot review their own profiles.
-
-### FR-8: Companion APK Download Landing Page
-* **FR-8.1 Showcase Section:** Hero banner, value propositions, key features, and mobile app screenshots.
-* **FR-8.2 Direct APK Download Button:** Hosts the compiled `MentorLink.apk` file for direct one-tap mobile download.
-* **FR-8.3 Installation Guide:** 3-step instructions on enabling unknown sources and installing the APK on Android devices.
+### FR-7: Account, Privacy & Support
+* **FR-7.1 Availability Schedule Manager:** Weekly recurring schedule slots (Mon–Sun) with ON/OFF availability toggle and duration selector.
+* **FR-7.2 Notification Preferences:** Granular push/email toggles for requests, reminders, updates, and messages.
+* **FR-7.3 Privacy & Security:** Password changes, 2FA toggle, login activity, profile visibility options, and account deletion.
+* **FR-7.4 Support & Help Center:** Categorized FAQs, Help Center, and Support Ticket contact form.
 
 ---
 
 ## 5. Non-Functional Requirements (NFR)
 
-### 5.1 Mobile Ergonomics & Performance
-* **Target Resolution:** Optimized for viewports between $360\text{px}$ and $430\text{px}$ (common Android screen sizes).
-* **Touch Targets:** All clickable chips, buttons, and inputs must be $\ge 44 \times 44\text{px}$.
-* **Bottom Nav Clearance:** Fixed bottom navigation bar must never obscure content (`pb-24` standard).
-* **Load Times:** Screen transition times $< 300\text{ms}$; initial bundle size $< 2\text{ MB}$.
+* **Mobile Ergonomics:** $360\text{px}$–$430\text{px}$ viewport focus with $\ge 44 \times 44\text{px}$ touch targets and `pb-24` bottom nav clearance.
+* **Design Standards:** Conforms to the **Ocean Breeze** design tokens (`sky-500` / `#0ea5e9` to `cyan-500` / `#06b6d4`, dark navy `#0f172a`, canvas `#f8fafc`).
+* **Security & RLS:** 100% Row Level Security on Supabase PostgreSQL tables; zero exposure of `service_role` keys.
+* **Native Hardening:** TLS 1.3 only (`android:usesCleartextTraffic="false"`).
 
-### 5.2 Security & Data Integrity
-* **100% Row Level Security (RLS):** Enabled across all tables in Supabase PostgreSQL.
-* **Zero Service-Role Key Leaks:** Only public `anonKey` permitted in client code; `service_role` is strictly prohibited.
-* **Android Native Hardening:**
-  * `android:usesCleartextTraffic="false"` in `AndroidManifest.xml` (TLS 1.3 / HTTPS only).
-  * `android:debuggable="false"` in release builds.
-* **Payment State Integrity:** Students cannot mark sessions as `confirmed`; only tutors can confirm payments.
-* **Hours Anti-Tamper:** Service hours can only be credited via server-side PostgreSQL triggers upon session completion.
-
----
-
-## 6. System Architecture & Tech Stack
-
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                         MENTORLINK SYSTEM TOPOLOGY                          │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-  [COMPANION WEB PAGE]                  [MOBILE CLIENT APP]
-  HTML5 + Tailwind CSS                  React.js (Vite) + Tailwind CSS
-  Hosted on Vercel / Netlify            Capacitor Native Android Container
-  "Download APK" Button                 Compiled via Android Studio into .apk
-           │                                      │
-           │                                      ▼
-           │                             [CLIENT SERVICE LAYER]
-           │                             src/services/*.js
-           │                                      │
-           └───────────────────┬──────────────────┘
-                               │ HTTPS / WSS
-                               ▼
-                   [SUPABASE BACKEND CLOUD]
-                   ├─ Supabase Auth (JWT, Bcrypt)
-                   ├─ PostgreSQL with 100% RLS
-                   ├─ Realtime Channels (Push alerts)
-                   └─ Storage (Avatars, Receipt proofs)
-```
-
-| Layer | Technology | Rationale |
-| :--- | :--- | :--- |
-| **Mobile Frontend** | React.js (Vite) | Fast component architecture, modular state, instant hot-reload. |
-| **Styling** | Tailwind CSS | Utility-first, mobile ergonomics, responsive tokens, zero runtime CSS overhead. |
-| **Mobile Container** | Capacitor (`@capacitor/android`) | Modern industry standard to wrap web code into Android Studio with zero native boilerplate. |
-| **Native IDE & Build**| Android Studio | Official Android build system for generating debug and signed APKs. |
-| **Backend & DB** | Supabase (PostgreSQL) | Managed auth, relational schema, robust RLS policies, real-time listeners. |
-| **Distribution** | Standalone Landing Page | Direct APK distribution for school/campus deployment without Play Store barriers. |
-
----
-
-## 7. Database Entity Blueprint
-
-The database consists of **7 normalized tables** in PostgreSQL:
-
-1. **`profiles`:** User ID (auth.uid), full name, email, education level, school name, bio, `is_tutor`.
-2. **`tutor_profiles`:** Hourly rate, headline, bio experience, total service hours, average rating, payment instructions.
-3. **`tutor_subjects`:** Subjects taught, category, grade level targeting.
-4. **`tutor_availability`:** Day of week (0–6), start time, end time, active flag.
-5. **`sessions`:** Scheduled start/end, duration, meeting type, link/location, topic, status, payment status, payment reference, notes, service hours flag.
-6. **`service_hour_logs`:** Accredited hours, session ID, tutor ID, student ID, verification timestamp.
-7. **`reviews`:** Session ID, student ID, tutor ID, rating (1–5), review comment.
-
----
-
-## 8. Implementation Roadmap
-
-### Phase 1: Core Foundation & UI Framework
-* Initialize Vite + React.js + Tailwind CSS project with mobile container layout.
-* Set up bottom navigation bar (`Home`, `Find Tutors`, `My Sessions`, `Profile`).
-* Initialize Supabase client and AuthContext (`login`, `register`, `session`).
-
-### Phase 2: Discovery, Scheduling & Direct Pay
-* Implement `FindTutorScreen` with subject and price filters.
-* Build `TutorProfileScreen` and `SlotPickerModal`.
-* Implement `BookSessionScreen` and direct payment reference submission.
-* Build Tutor Incoming Requests view with **Confirm Payment** actions.
-
-### Phase 3: Sessions, Notes & Community Hours
-* Implement `MySessionsScreen` with active tabs (`Upcoming`, `Pending`, `Completed`).
-* Build `SessionNotesPad` for tutor post-session summaries.
-* Implement PostgreSQL trigger for auto-crediting community service hours.
-* Build `ServiceHoursScreen` with accreditation summary export.
-* Implement `RateSessionModal` and tutor rating auto-update trigger.
-
-### Phase 4: Native Android Packaging & Companion Page
-* Add Capacitor (`@capacitor/core`, `@capacitor/android`).
-* Generate Android Studio project with `npx cap add android`.
-* Configure `AndroidManifest.xml` (disable cleartext, set orientation).
-* Compile standalone `.apk` in Android Studio.
-* Build single-page APK download landing page (`landing/index.html`).
-
----
-
-## 9. Success Metrics & Key Performance Indicators (KPIs)
-
-1. **Matching Velocity:** Average time from tutor search to confirmed booking $< 2\text{ hours}$.
-2. **Payment Confirmation Rate:** Over $95\%$ of submitted direct payments verified and confirmed without dispute.
-3. **Volunteer Hour Accreditation:** Accurate, verifiable tally of service hours generated without manual administrative interventions.
-4. **Mobile Stability:** Zero crashes on Android 9.0+ devices with seamless offline-to-online recovery.

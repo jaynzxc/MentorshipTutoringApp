@@ -1,278 +1,174 @@
-# MentorLink — System Flowcharts & Lifecycle State Diagrams
+# MentorLinks — System Flowcharts & Lifecycle State Diagrams
 
-**Project Title:** MentorLink — Mentorship & Tutoring Matching Mobile Application  
-**Document Purpose:** Comprehensive visual flowcharts, decision trees, and state machine diagrams mapping 100% of the end-to-end multi-role workflows across Students, Peer Tutors, Direct Payments, Database Triggers, and University Service Hours Accreditation.  
+**Project Title:** MentorLinks — Mentorship & Tutoring Matching Mobile Application  
+**Tagline:** *"Connect. Learn. Grow."*  
+**Document Purpose:** Comprehensive visual flowcharts, decision trees, and state machine diagrams mapping 100% of the end-to-end multi-role workflows across Students, Peer Mentors, Direct Payments, In-App Messaging, Virtual Classroom, Database Triggers, and University Service Hours Accreditation.  
 **Target Location:** `docs/system_flowchart.md`  
-**Version:** 1.0  
+**Version:** 2.0  
 
 ---
 
 ## 1. Master End-to-End System Flowchart
 
-This master diagram illustrates the complete bird's-eye lifecycle from user account creation to session completion, study notes, review submission, and university service hours crediting:
-
 ```mermaid
 flowchart TD
-    Start(["User Launches MentorLink"]) --> Auth{"Authenticated?"}
-    Auth -- "No" --> Register["Sign Up / Login (High School or College)"]
-    Auth -- "Yes" --> CheckRole{"Active Role Mode"}
+    Start(["User Launches MentorLinks"]) --> Auth{"Authenticated?"}
+    Auth -- "No" --> Register["Sign Up / Login (Student vs Mentor Account)"]
+    Auth -- "Yes" --> CheckRole{"Active Role in AppContext"}
     Register --> CheckRole
 
-    %% Dual Role Routing
-    CheckRole -- "Learner Mode" --> StudentDashboard["Student Home Dashboard"]
-    CheckRole -- "Mentor Mode" --> TutorCheck{"is_tutor == true?"}
-
-    TutorCheck -- "No" --> TutorOnboard["Tutor Setup Wizard (Set Bio, Rates, Subjects)"]
-    TutorOnboard --> TutorDashboard["Tutor Dashboard"]
-    TutorCheck -- "Yes" --> TutorDashboard
+    %% Dual 5-Tab Shell Routing
+    CheckRole -- "Student Mode" --> S_Tabs["Student 5 Tabs: Home | Explore | Messages | Sessions | Profile"]
+    CheckRole -- "Mentor Mode" --> M_Tabs["Mentor 5 Tabs: Home | Students | Messages | Sessions | Profile"]
 
     %% Student Discovery & Booking Flow
-    StudentDashboard --> Search["Find Tutors (Search & Filter by Subject, Rate, Day)"]
-    Search --> ViewProfile["View Mentor Profile & Reviews"]
-    ViewProfile --> SelectSlot["Select Weekly Slot (SlotPicker) & Enter Topic"]
-    SelectSlot --> SubmitBooking["Submit Booking Request (status: 'pending')"]
+    S_Tabs --> S_Explore["Explore Tab: Search & Filter Mentors"]
+    S_Explore --> S_Profile["View Mentor Profile & Subjects"]
+    S_Profile --> S_Book["Book Session: Select Slot & Topic"]
+    S_Book --> S_Submit["Submit Request (status: 'pending')"]
 
-    %% Tutor Response & Payment Branching
-    SubmitBooking --> TutorNotification["Tutor Receives Booking Notification"]
-    TutorDashboard --> ReviewBooking["Review Incoming Bookings"]
-    TutorNotification --> ReviewBooking
+    %% Mentor Processing
+    S_Submit --> M_Notify["Mentor Receives Request in Home & Sessions Tabs"]
+    M_Tabs --> M_Sessions["Sessions Tab: Review Incoming Requests"]
+    M_Notify --> M_Sessions
 
-    ReviewBooking --> TutorDecision{"Accept Booking?"}
-    TutorDecision -- "Decline" --> BookingCancelled["Booking Cancelled (status: 'cancelled')"]
-    TutorDecision -- "Accept" --> RateCheck{"Hourly Rate?"}
+    M_Sessions --> M_Decision{"Mentor Decision"}
+    M_Decision -- "Decline" --> M_DeclineReason["Select Reason (Schedule Conflict, etc.)"]
+    M_DeclineReason --> S_Declined["status: 'declined', decline_reason set"]
 
-    %% Payment Lifecycle
-    RateCheck -- "Paid (₱Rate/hr)" --> UnpaidState["status: 'pending', payment_status: 'unpaid'"]
-    UnpaidState --> StudentTransfer["Student Transfers via GCash/Maya & Submits Ref #"]
-    StudentTransfer --> RefSubmitted["payment_status: 'payment_submitted'"]
-    RefSubmitted --> TutorVerify{"Tutor Verifies Ref in Payment App"}
-    TutorVerify -- "Incorrect / Unpaid" --> UnpaidState
-    TutorVerify -- "Payment Verified" --> ConfirmPaid["payment_status: 'confirmed', status: 'confirmed'"]
+    M_Decision -- "Accept" --> RateCheck{"Session Rate?"}
+    RateCheck -- "Paid (₱Rate/hr)" --> S_Pay["Student Transfers via GCash/Maya & Submits Ref #"]
+    S_Pay --> M_VerifyPay{"Mentor Verifies Ref # in Payment App"}
+    M_VerifyPay -- "Verified" --> ConfirmedSession["status: 'confirmed', payment_status: 'confirmed'"]
 
-    RateCheck -- "Volunteer (₱0.00)" --> ConfirmVolunteer["status: 'confirmed' (Volunteer Service)"]
+    RateCheck -- "Volunteer (₱0.00)" --> ConfirmedSession
 
-    %% Session Execution & Completion
-    ConfirmPaid --> AttendSession["Attend 1-on-1 Tutoring Session (Online / In-Person)"]
-    ConfirmVolunteer --> AttendSession
+    %% Real-time Chat & Virtual Classroom
+    ConfirmedSession --> ChatThread["In-App Messaging with Session Shortcut Card"]
+    ConfirmedSession --> TimeGate{"10 Mins Before Start?"}
+    TimeGate -- "Yes" --> Classroom["Unlock 'Join Session' -> In-App Virtual Classroom"]
 
-    AttendSession --> CompleteSession["Mark Session Completed (status: 'completed')"]
+    %% Meeting & Completion
+    Classroom --> ConductSession["Conduct Call (Video, Audio, Screen Share)"]
+    ConductSession --> SaveNotes["Mentor Drafts Notes in SessionNotesPad"]
+    SaveNotes --> CompleteSession["Mentor Taps 'End & Complete' (status: 'completed')"]
 
-    %% Post-Session Outcomes (Parallel Triggers & Actions)
-    CompleteSession --> PostNotes["Tutor Writes Post-Session Study Notes"]
-    CompleteSession --> StudentReview["Student Submits 1-5 Star Rating & Review"]
-    StudentReview --> TriggerRatings["Server Trigger: Recalculate Tutor Average Rating"]
-
-    CompleteSession --> ServiceHoursCheck{"Was Session Volunteer (₱0)?"}
-    ServiceHoursCheck -- "Yes" --> TriggerHours["Server Trigger: Commit to service_hour_logs & Increment Total Hours"]
-    TriggerHours --> ExportCert["Tutor Exports / Prints Official Service Hours Certificate"]
-    ServiceHoursCheck -- "No" --> EndState(["Session Finalized"])
-    ExportCert --> EndState
+    %% Post-Session Outcomes
+    CompleteSession --> StudentRate["Student Submits 1-5 Star Review -> Recalculates Rating"]
+    CompleteSession --> ServiceCheck{"Volunteer Session?"}
+    ServiceCheck -- "Yes" --> AutoCredit["DB Trigger: Commit to service_hour_logs & Add Hours"]
+    AutoCredit --> ExportCert["Mentor Exports Service Hours Certificate"]
+    ServiceCheck -- "No" --> Finalize(["Session Finalized"])
+    ExportCert --> Finalize
+    StudentRate --> Finalize
 ```
 
 ---
 
-## 2. Student (Learner) User Journey Flowchart
-
-Detailed step-by-step decision flow for students seeking academic help:
+## 2. Student 5-Tab User Journey Flowchart
 
 ```mermaid
 flowchart TD
-    S1(["Student Opens App"]) --> S2["View Home Dashboard (Upcoming Countdown Card)"]
-    S2 --> S3["Tap 'Find Tutors' Tab"]
-    S3 --> S4["Enter Search Keywords or Tap Subject Chips"]
-    S4 --> S5{"Apply Filters?"}
-    S5 -- "Yes" --> S6["Filter by Category, Rate Slider (₱0-₱500), or Grade Level"]
-    S5 -- "No" --> S7["Browse Tutor Feed (TutorCard items)"]
-    S6 --> S7
+    S0(["Student Opens MentorLinks"]) --> S1["Tab 1: Home (Quick Metrics, Next Session, Top Mentors)"]
+    S0 --> S2["Tab 2: Explore (Search, Filters by Category/Rate/Level)"]
+    S0 --> S3["Tab 3: Messages (1-on-1 Chat with Mentors)"]
+    S0 --> S4["Tab 4: Sessions (Upcoming, Completed, Cancelled)"]
+    S0 --> S5["Tab 5: Profile (Bio, Learning Progress, Support Tickets)"]
 
-    S7 --> S8["Tap Tutor Card to Open Full Profile"]
-    S8 --> S9["Inspect Bio, Credentials, Rating Breakdown & Student Reviews"]
-    S9 --> S10{"Proceed to Book?"}
-    S10 -- "No" --> S7
-    S10 -- "Yes" --> S11["Tap 'Book Mentorship Session'"]
+    %% Explore to Booking
+    S2 --> S_Select["Select Mentor Card -> Inspect Profile & Reviews"]
+    S_Select --> S_PickSlot["Select Available Day & Time Slot"]
+    S_PickSlot --> S_Topic["Enter Topic, Homework Prompts & Questions"]
+    S_Topic --> S_CreateBooking["Create Booking (status: 'pending')"]
 
-    S11 --> S12["Select Available Day Chip (SlotPicker)"]
-    S12 --> S13["Select 1-Hour Time Window"]
-    S13 --> S14["Choose Meeting Type: Online vs In-Person"]
-    S14 --> S15["Enter Specific Homework Topic / Questions"]
-    S15 --> S16["Review Summary & Submit Request"]
+    %% Payment Reference
+    S_CreateBooking --> S_PayStep{"Is Paid Session?"}
+    S_PayStep -- "Yes" --> S_Transfer["Transfer via GCash/Maya & Enter Ref #"]
+    S_Transfer --> S_Submitted["payment_status: 'payment_submitted'"]
+    S_PayStep -- "No (Volunteer)" --> S_WaitMentor["Wait for Mentor Confirmation"]
+    S_Submitted --> S_WaitMentor
 
-    S16 --> S17["View Request in 'My Sessions' (Pending Tab)"]
-    S17 --> S18{"Tutor Accepts?"}
-    S18 -- "Declined" --> S19["Booking Cancelled Notification"]
-    S18 -- "Accepted" --> S20{"Is Session Paid or Volunteer?"}
+    %% Session Execution
+    S_WaitMentor --> S_Confirmed{"Mentor Response"}
+    S_Confirmed -- "Accepted" --> S_Ready["Status: Confirmed (Moves to Upcoming)"]
+    S_Confirmed -- "Declined" --> S_SeeReason["Status: Declined (Inspect Reason)"]
 
-    S20 -- "Paid Session" --> S21["View Tutor's GCash/Maya Account Details"]
-    S21 --> S22["Transfer Funds via GCash/Maya App"]
-    S22 --> S23["Paste Reference Number in MentorLink Form"]
-    S23 --> S24["Wait for Tutor Confirmation (payment_submitted)"]
-    S24 --> S25["Payment Confirmed Badge (status: 'confirmed')"]
-
-    S20 -- "Volunteer" --> S25
-
-    S25 --> S26["Attend Scheduled Tutoring Session"]
-    S26 --> S27["Session Marked Completed"]
-    S27 --> S28["Read Tutor's Post-Session Study Notes"]
-    S27 --> S29["Rate Session: Select 1-5 Stars & Submit Written Review"]
-    S29 --> S30(["Journey Complete"])
+    S_Ready --> S_JoinClassroom["10 Min Warning -> Tap 'Join Session' -> Classroom"]
+    S_JoinClassroom --> S_Attend["Attend Video Session & Takeaways"]
+    S_Attend --> S_LeaveReview["Session Completed -> Rate 1-5 Stars & Feedback"]
 ```
 
 ---
 
-## 3. Peer Tutor (Mentor) User Journey Flowchart
-
-Detailed workflow for student tutors providing mentorship and earning accredited service hours:
+## 3. Mentor 5-Tab User Journey Flowchart
 
 ```mermaid
 flowchart TD
-    T1(["Student Taps 'Become a Peer Mentor' / Dual-Role Switcher"]) --> T2{"Already a Tutor?"}
-    T2 -- "No" --> T3["Tutor Setup Wizard (Headline, Bio, Teaching Experience)"]
-    T3 --> T4["Select Hourly Rate: Volunteer (₱0.00) or Paid (₱Rate/hr)"]
-    T4 --> T5["Configure Payment Instructions (if paid)"]
-    T5 --> T6["Select Initial Academic Subjects & Grade Levels"]
-    T6 --> T7["Activate Mentor Profile (is_tutor: true)"]
-    T2 -- "Yes" --> T8["Tutor Dashboard"]
-    T7 --> T8
+    M0(["Mentor Opens MentorLinks"]) --> M1["Tab 1: Home (2x2 Stats: Earnings, Hours, Rating, Requests)"]
+    M0 --> M2["Tab 2: Students (Mentees Roster, Search & Quick Chat)"]
+    M0 --> M3["Tab 3: Messages (Direct Chat with Students)"]
+    M0 --> M4["Tab 4: Sessions (Upcoming, Requests, Completed)"]
+    M0 --> M5["Tab 5: Profile (Schedule Settings, Subjects, Service Hours Summary)"]
 
-    %% Management Functions
-    T8 --> T9{"Select Management Action"}
-    T9 -- "Schedule" --> T10["Manage Weekly Schedule (Add/Delete Recurring Time Slots)"]
-    T9 -- "Subjects" --> T11["Manage Subjects (Add/Remove Subjects & Grade Levels)"]
-    T9 -- "Bookings" --> T12["Incoming Bookings List"]
-    T9 -- "Service Hours" --> T13["Service Hours Ledger"]
+    %% Handling Incoming Requests
+    M1 --> M_ReqAlert["Tap Pending Request Card"]
+    M4 --> M_ReqTab["Select 'Requests' Tab"]
+    M_ReqAlert --> M_Inspect["Inspect Topic, Slot, Student Program"]
+    M_ReqTab --> M_Inspect
 
-    %% Booking Processing
-    T12 --> T14["Inspect Booking Details (Student, Topic, Meeting Type, Slot)"]
-    T14 --> T15{"Accept Booking Request?"}
-    T15 -- "Decline" --> T16["Enter Optional Reason & Decline (status: 'cancelled')"]
-    T15 -- "Accept" --> T17{"Session Type"}
+    M_Inspect --> M_Action{"Accept or Decline?"}
+    M_Action -- "Decline" --> M_ChooseReason["Select Decline Reason Modal -> Confirm Decline"]
+    M_ChooseReason --> M_DeclinedState["status: 'declined', decline_reason committed"]
 
-    T17 -- "Paid" --> T18["Wait for Student Reference Number (payment_status: 'payment_submitted')"]
-    T18 --> T19["Check GCash/Maya App for Matching Reference Number"]
-    T19 --> T20{"Reference Valid?"}
-    T20 -- "No / Unreceived" --> T21["Flag Issue to Student"]
-    T20 -- "Yes / Verified" --> T22["Tap '✓ Confirm Payment' (status: 'confirmed')"]
+    M_Action -- "Accept" --> M_CheckPay{"Is Paid Session?"}
+    M_CheckPay -- "Paid" --> M_WaitRef["Student Submits GCash/Maya Ref #"]
+    M_WaitRef --> M_ConfirmFunds["Verify Funds in Mobile Payment App -> Tap 'Confirm Payment'"]
+    M_CheckPay -- "Volunteer (₱0)" --> M_InstantConfirm["Tap 'Accept Booking'"]
+    M_ConfirmFunds --> M_SessionConfirmed["status: 'confirmed'"]
+    M_InstantConfirm --> M_SessionConfirmed
 
-    T17 -- "Volunteer" --> T22
+    %% Virtual Classroom
+    M_SessionConfirmed --> M_Classroom["10 Min Countdown -> Launch Virtual Classroom"]
+    M_Classroom --> M_Controls["Host Session (Mute, Camera, Screen Share, Meeting Chat)"]
+    M_Controls --> M_Notes["Draft Takeaways in SessionNotesPad"]
+    M_Notes --> M_Complete["End & Mark Completed (status: 'completed')"]
 
-    %% Session Conduct
-    T22 --> T23["Conduct Mentorship Session with Student"]
-    T23 --> T24["Mark Session as Completed (status: 'completed')"]
-    T24 --> T25["Open Session Notes Pad & Save Study Recommendations"]
-
-    %% Automatic Server Crediting
-    T24 --> T26{"Was Session Rate ₱0.00?"}
-    T26 -- "Yes" --> T27["Database Trigger Commits Hours to service_hour_logs"]
-    T27 --> T28["Total Service Hours Automatically Increments on Dashboard"]
-    T28 --> T29["Export & Print Official University Service Hours Certificate"]
-    T26 -- "No" --> T30["Earnings Added to Tutor Metrics"]
-
-    T29 --> T31(["Tutor Lifecycle Complete"])
-    T30 --> T31
+    %% Automatic Accreditation
+    M_Complete --> M_AutoTrigger{"Volunteer Session?"}
+    M_AutoTrigger -- "Yes" --> M_Credited["Trigger commits to service_hour_logs & increments total_service_hours"]
+    M_Credited --> M_Print["Tab 5: Export Service Hours Certificate (PDF/Print)"]
 ```
 
 ---
 
-## 4. Direct Payment Verification State Machine
+## 4. State Machines
 
-State transitions for the simplified, direct peer-to-peer payment model:
-
+### 4.1 Direct Payment Verification State Machine
 ```mermaid
 stateDiagram-v2
-    [*] --> unpaid : Paid Booking Accepted by Tutor
+    [*] --> unpaid : Paid Booking Created
+    unpaid --> payment_submitted : Student transfers funds & enters Ref #
+    note right of unpaid : Student cannot confirm payment
+    payment_submitted --> payment_submitted : Student updates reference number
+    payment_submitted --> confirmed : Mentor verifies funds & taps 'Confirm Payment'
+    note right of confirmed : auth.uid() must match tutor_id
+    confirmed --> [*]
 
-    unpaid --> payment_submitted : Student transfers via GCash/Maya & enters Ref #
-    note right of unpaid : Student cannot edit payment_status directly
-
-    payment_submitted --> payment_submitted : Student updates / corrects reference number
-    payment_submitted --> unpaid : Tutor reports invalid reference or non-receipt
-
-    payment_submitted --> confirmed : Assigned Tutor verifies funds & confirms receipt
-    note right of confirmed : Only assigned tutor (auth.uid() = tutor_id) can confirm
-
-    confirmed --> [*] : Session proceeds to scheduled time
-
-    %% Volunteer bypass
-    [*] --> volunteer_exempt : Session rate is ₱0.00 (Free Volunteer)
-    volunteer_exempt --> confirmed : Auto-confirmed (No payment required)
+    [*] --> volunteer_exempt : Session rate is ₱0.00
+    volunteer_exempt --> confirmed : Mentor accepts (No payment required)
 ```
 
----
-
-## 5. Session Lifecycle State Machine
-
-Complete transition rules for tutoring sessions in the `sessions` table:
-
+### 4.2 Session Lifecycle State Machine
 ```mermaid
 stateDiagram-v2
-    [*] --> pending : Student submits booking request (Slot reserved)
-
-    pending --> confirmed : Tutor accepts booking (and confirms payment if paid)
-    pending --> cancelled : Tutor declines request OR Student cancels before acceptance
-
-    confirmed --> in_progress : Scheduled start time reached
-    confirmed --> cancelled : Either party cancels prior to start (with notice)
-
-    in_progress --> completed : Session finished (Tutor or Student marks complete)
-    in_progress --> cancelled : Session aborted due to no-show / technical failure
-
-    completed --> [*] : Triggers: Service Hours Log + Rating Recalculation + Study Notes
-    cancelled --> [*] : Slot released back to tutor schedule
+    [*] --> pending : Student submits booking
+    pending --> confirmed : Mentor accepts (& payment confirmed)
+    pending --> declined : Mentor declines (with decline_reason)
+    pending --> cancelled : Student cancels pending booking
+    confirmed --> in_classroom : 10 mins prior to scheduled start
+    in_classroom --> completed : Mentor marks session completed
+    in_classroom --> cancelled : Aborted due to technical failure
+    completed --> [*] : Triggers: Service Hours Credit + Rating Recalculation
+    declined --> [*]
+    cancelled --> [*]
 ```
-
----
-
-## 6. University Community Service Hours Accreditation Flow
-
-Shows the tamper-proof server-side database trigger commit for accredited volunteer hours:
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Tutor as Peer Mentor (Tutor)
-    participant Client as MentorLink Mobile App
-    participant DB as Supabase PostgreSQL
-    participant Trigger as Trigger: handle_session_completion
-    participant Cert as Certificate Generator
-
-    Tutor->>Client: Tap "Mark Session Completed"
-    Client->>DB: UPDATE sessions SET status = 'completed' WHERE id = sessionId
-    
-    rect rgb(240, 243, 255)
-        note over DB,Trigger: Server-Side Integrity Check (SECURITY DEFINER)
-        DB->>Trigger: Execute handle_session_completion_service_hours()
-        Trigger->>DB: Check if hourly_rate == 0.00 AND status == 'completed'
-        alt Is Paid Session (hourly_rate > 0)
-            Trigger-->>DB: Skip service hours credit
-        else Is Volunteer Session (hourly_rate == 0)
-            Trigger->>Trigger: Calculate Duration = (end_time - start_time) in hours
-            Trigger->>DB: INSERT INTO service_hour_logs (tutor_id, session_id, hours_credited)
-            Trigger->>DB: UPDATE tutor_profiles SET total_service_hours = total_service_hours + Duration
-        end
-    end
-
-    DB-->>Client: Return updated session record & new total_service_hours
-    Client-->>Tutor: Display "Session Completed & Hours Accredited!"
-
-    opt Tutor Exports Document
-        Tutor->>Client: Tap "View & Print Service Hours Certificate"
-        Client->>Cert: Fetch certified records from service_hour_logs
-        Cert->>Cert: Generate anti-counterfeit hash (ML-SRV-YYYY-ID-HOURS)
-        Cert-->>Tutor: Display official printable A4 certificate with signature lines
-    end
-```
-
----
-
-## 7. Flowchart State & Role Consistency Matrix
-
-| Flowchart | Initiating Role | Authorizing Role | Database Table Updated | Security Constraint Enforced |
-| :--- | :--- | :--- | :--- | :--- |
-| **Tutor Discovery** | Student | Public / Anyone | `tutor_profiles`, `tutor_subjects` | Active tutors only (`is_accepting_students = true`). |
-| **Booking Submission** | Student | Student (`auth.uid()`) | `sessions` (`status = 'pending'`) | Anti-self-booking check (`student_id != tutor_id`). |
-| **Payment Submission**| Student | Student (`auth.uid()`) | `sessions` (`payment_status = 'payment_submitted'`) | Can only update own session reference number. |
-| **Payment Confirmation**| Tutor | Tutor (`auth.uid()`) | `sessions` (`payment_status = 'confirmed'`) | Student **cannot** confirm; only assigned tutor. |
-| **Session Completion** | Tutor / Student | Both (`auth.uid()`) | `sessions` (`status = 'completed'`) | State transition requires existing `confirmed` status. |
-| **Service Hours Credit**| Automated Trigger | Server (`SECURITY DEFINER`)| `service_hour_logs`, `tutor_profiles` | Zero client inserts permitted; committed strictly via trigger. |
-| **Review Submission** | Student | Student (`auth.uid()`) | `reviews` | Unique constraint (`session_id`); completed sessions only. |
-| **Rating Recalculation**| Automated Trigger | Server (`SECURITY DEFINER`)| `tutor_profiles.average_rating` | Automated arithmetic average over all reviews. |

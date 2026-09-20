@@ -1,18 +1,19 @@
-# MentorLink — Mentorship & Tutoring Matching Application
+# MentorLinks — Mentorship & Tutoring Matching Application
 # AI Agent Behavior Rules & Project Architecture Directives
 
 ## 1. Project Identity
 
-**Application Title:** MentorLink — Mentorship & Tutoring Matching Mobile Application
+**Application Title:** MentorLinks — Mentorship & Tutoring Matching Mobile Application  
+**Tagline:** *"Connect. Learn. Grow."*
 
-MentorLink is a peer-to-peer mentorship and tutoring platform designed for high school and college students. The system allows students to find and book academic assistance from qualified peer tutors, schedule sessions, pay tutors directly, take post-session study notes, and enables peer mentors to earn income or accredit verifiable **University Community Service Hours**.
+MentorLinks is a peer-to-peer mentorship and tutoring platform designed for high school and college students. The system allows students to find and book academic assistance from qualified peer mentors, chat in real-time, join in-app virtual classrooms, pay mentors directly, and enables student mentors to earn income or accredit verifiable **University Community Service Hours**.
 
 ---
 
 ## 2. Technology Stack & Runtime Boundaries
 
 * **Frontend:** React.js (functional components with Hooks) built via **Vite**.
-* **Styling:** **Tailwind CSS** (mobile-first utilities, design system tokens).
+* **Styling:** **Tailwind CSS v4** (Ocean Breeze mobile-first design tokens).
 * **Language:** Vanilla JavaScript (**ES6+ Modules**).
 * **Mobile Runtime & Native Wrapper:** **Capacitor** (`@capacitor/core`, `@capacitor/android`) targeting **Android Studio**.
 * **Backend & Database:** **Supabase** (PostgreSQL, Supabase Auth, Row Level Security, Realtime, Storage).
@@ -24,18 +25,22 @@ MentorLink is a peer-to-peer mentorship and tutoring platform designed for high 
 ## 3. Core Principles & Scope Boundaries
 
 1. **Pure Mobile Application Experience:**
-   * The core application is engineered strictly for mobile screens ($360\text{px}$–$430\text{px}$) with native ergonomics (sticky bottom navigation, safe-area insets, $\ge 44\text{px}$ touch targets).
+   * The core application is engineered strictly for mobile screens ($360\text{px}$–$430\text{px}$) with native ergonomics (sticky 5-tab bottom navigation, safe-area insets, $\ge 44\text{px}$ touch targets).
    * Packaged and compiled into a standalone Android APK via Capacitor and Android Studio.
-2. **Simplified Economic Model (Direct Pay Only):**
-   * Tutors set transparent hourly/session rates (or volunteer ₱0.00).
+2. **Dual 5-Tab Navigation Architecture:**
+   * **Student Mode:** `🏠 Home` | `🔍 Explore` | `💬 Messages` | `📅 Sessions` | `👤 Profile`
+   * **Mentor Mode:** `🏠 Home` | `👥 Students` | `💬 Messages` | `📅 Sessions` | `👤 Profile`
+3. **Simplified Economic Model (Direct Pay Only):**
+   * Mentors set transparent hourly/session rates (or volunteer ₱0.00).
    * Students transfer payment directly (GCash, Maya, cash) and submit a reference number.
-   * Tutors verify and confirm payment receipt.
+   * Mentors verify and confirm payment receipt (or decline with a specific reason).
    * **No Complex Token/Barter Systems:** Keep monetary tracking clear, transparent, and direct.
-3. **Non-Monetary Incentive (Community Service Hours):**
+4. **Integrated In-App Real-time Messaging & Virtual Classroom:**
+   * Direct 1-on-1 messaging threads with embedded session shortcut cards.
+   * Virtual classroom environment unlocked 10 minutes before scheduled start (video streams, audio toggles, screen sharing, meeting chat, session notes pad).
+5. **Non-Monetary Incentive (University Community Service Hours):**
    * Strictly focused on **University Community Service Hours Accreditation** for student mentors, generating verifiable service hour logs and printable summaries.
-4. **No AI Wrappers or Premature Bloat:**
-   * Keep matching and scheduling straightforward, intuitive, and human-centric.
-5. **Security & RLS Defense-in-Depth:**
+6. **Security & RLS Defense-in-Depth:**
    * Enforce 100% Row Level Security (RLS) on all Supabase tables.
    * Never expose `service_role` keys in client code; use public `anonKey` only.
 
@@ -46,6 +51,8 @@ MentorLink is a peer-to-peer mentorship and tutoring platform designed for high 
 Before writing or modifying ANY code, you MUST:
 
 ### 4.1 Read Relevant Project Documentation
+* Read [`docs/student_flow_spec.md`](file:///c:/Users/jaync/Desktop/Mentorship%20Tutoring%20App/MentorshipTutoringApp/docs/student_flow_spec.md) for detailed Student UI & screen flows.
+* Read [`docs/mentor_flow_spec.md`](file:///c:/Users/jaync/Desktop/Mentorship%20Tutoring%20App/MentorshipTutoringApp/docs/mentor_flow_spec.md) for detailed Mentor UI & screen flows.
 * Read [`docs/PRD.md`](file:///c:/Users/jaync/Desktop/Mentorship%20Tutoring%20App/MentorshipTutoringApp/docs/PRD.md) to understand WHAT the feature should do.
 * Read [`docs/database_schema_design.md`](file:///c:/Users/jaync/Desktop/Mentorship%20Tutoring%20App/MentorshipTutoringApp/docs/database_schema_design.md) to understand the relational data model.
 * Read [`docs/system_workflow.md`](file:///c:/Users/jaync/Desktop/Mentorship%20Tutoring%20App/MentorshipTutoringApp/docs/system_workflow.md) to trace cross-role data flows.
@@ -94,13 +101,12 @@ For any change involving:
 
 Follow the phased roadmap protocol defined in `.agent/skills/planning/SKILL.md`.
 
-
 ---
 
 ## 6. Destructive Change Protocol
 
 The following actions require **EXPLICIT user approval** before execution:
-* Deleting data (users, sessions, reviews, logs).
+* Deleting data (users, sessions, reviews, logs, messages).
 * Dropping database tables or columns.
 * Removing components, pages, or features.
 * Modifying authentication logic or RLS policies.
@@ -119,10 +125,11 @@ The following actions require **EXPLICIT user approval** before execution:
 When code, documentation, or requirements appear to conflict, reconcile using this strict hierarchy:
 
 1. **Actual Working Implementation** (PostgreSQL schema, working React components).
-2. **Product Requirements Document** ([`docs/PRD.md`](file:///c:/Users/jaync/Desktop/Mentorship%20Tutoring%20App/MentorshipTutoringApp/docs/PRD.md)).
-3. **Database Schema Design** ([`docs/database_schema_design.md`](file:///c:/Users/jaync/Desktop/Mentorship%20Tutoring%20App/MentorshipTutoringApp/docs/database_schema_design.md)).
-4. **System Workflow** ([`docs/system_workflow.md`](file:///c:/Users/jaync/Desktop/Mentorship%20Tutoring%20App/MentorshipTutoringApp/docs/system_workflow.md)).
-5. **Security Blueprint** ([`docs/security.md`](file:///c:/Users/jaync/Desktop/Mentorship%20Tutoring%20App/MentorshipTutoringApp/docs/security.md)).
+2. **Divided Flow Specs** ([`docs/student_flow_spec.md`](file:///c:/Users/jaync/Desktop/Mentorship%20Tutoring%20App/MentorshipTutoringApp/docs/student_flow_spec.md) and [`docs/mentor_flow_spec.md`](file:///c:/Users/jaync/Desktop/Mentorship%20Tutoring%20App/MentorshipTutoringApp/docs/mentor_flow_spec.md)).
+3. **Product Requirements Document** ([`docs/PRD.md`](file:///c:/Users/jaync/Desktop/Mentorship%20Tutoring%20App/MentorshipTutoringApp/docs/PRD.md)).
+4. **Database Schema Design** ([`docs/database_schema_design.md`](file:///c:/Users/jaync/Desktop/Mentorship%20Tutoring%20App/MentorshipTutoringApp/docs/database_schema_design.md)).
+5. **System Workflow** ([`docs/system_workflow.md`](file:///c:/Users/jaync/Desktop/Mentorship%20Tutoring%20App/MentorshipTutoringApp/docs/system_workflow.md)).
+6. **Security Blueprint** ([`docs/security.md`](file:///c:/Users/jaync/Desktop/Mentorship%20Tutoring%20App/MentorshipTutoringApp/docs/security.md)).
 
 **Never** silently pick whichever source was read last. Identify the discrepancy, explain the impact, and align with the user.
 
@@ -138,11 +145,18 @@ When code, documentation, or requirements appear to conflict, reconcile using th
 * Avoid prop drilling by utilizing React Context (`AuthContext`, `AppContext`).
 * Never render unescaped user inputs with `dangerouslySetInnerHTML`; use standard safe JSX text rendering.
 
-### 8.2 Tailwind CSS & Mobile UI
+### 8.2 Tailwind CSS & Mobile UI (Ocean Breeze Theme)
 * Design mobile-first ($360\text{px}$–$430\text{px}$ viewport focus).
 * Ensure interactive touch targets are $\ge 44 \times 44\text{px}$.
 * Ensure all scrollable containers include bottom clearance padding (`pb-24`) so the fixed bottom navigation bar does not cover form buttons or list cards.
-* Adhere to the color tokens and component anatomy defined in `.agent/skills/ui-ux_implementation/SKILL.md`.
+* **Vector Iconography (Strictly NO Emojis in UI Code):** Use vector SVGs or Font Awesome icons for all buttons, bottom navigation tabs, header actions, and status badges. Never render raw Unicode emojis as UI icons in React component implementation.
+* Adhere to the Ocean Breeze tokens defined in `.agent/skills/ui-ux_implementation/SKILL.md`:
+  - Primary Brand (Deep Sky): `#0284c7` (`bg-sky-600`, `text-sky-600`)
+  - Accent / Vibrant: `#0ea5e9` (`bg-sky-500`), `#06b6d4` (`bg-cyan-500`)
+  - Deep Navy Text: `#0f172a` (`text-slate-900`)
+  - Soft Tint: `#f0f9ff` (`bg-sky-50`, `text-sky-700`)
+  - Canvas: `#f8fafc` (`bg-slate-50`)
+  - Surface: `#ffffff` (`bg-white`, `border-slate-200`)
 
 ### 8.3 Supabase & Database
 * Use PostgreSQL through Supabase.
@@ -162,6 +176,8 @@ When code, documentation, or requirements appear to conflict, reconcile using th
     console.error('[Service Error]:', err.message);
     return { data: null, error: { message: err.message || 'An unexpected error occurred.' } };
   }
+  ```
+
 ### 8.5 Human-Grade Engineering & Prevention of "AI Slop"
 * **Write Human-Crafted, Deliberate Code:** Produce clean, readable, production-grade code that looks and functions like it was written by a senior human engineer. Avoid generic, repetitive, robotic "AI slop".
 * **Zero Placeholders & Stubs:** NEVER leave lazy placeholders such as `// TODO: implement logic here`, `// add your code here`, `// ... rest of code`, or empty dummy functions. Every component, hook, and service method must be fully implemented, syntactically correct, and operational.
@@ -179,7 +195,7 @@ When code, documentation, or requirements appear to conflict, reconcile using th
   * Use public `anonKey` only.
 * **Direct Payment State Machine:**
   * Students can only submit payment reference numbers (`payment_status = 'payment_submitted'`).
-  * Students CANNOT confirm payments; only the assigned tutor (`auth.uid() = tutor_id`) can mark `payment_status = 'confirmed'`.
+  * Students CANNOT confirm payments; only the assigned mentor (`auth.uid() = tutor_id`) can mark `payment_status = 'confirmed'`.
 * **Community Service Hours Integrity:**
   * Volunteer hours cannot be directly inserted or modified by client apps.
   * Accreditations are committed strictly via server-side PostgreSQL triggers upon session completion (`status = 'completed'`).
@@ -193,9 +209,9 @@ When code, documentation, or requirements appear to conflict, reconcile using th
 
 After implementing any feature or bug fix:
 1. **Mobile Viewport Test:** Verify responsive behavior on standard mobile screen widths ($360\text{px}$–$430\text{px}$).
-2. **Bottom Nav Spacing Check:** Confirm that no buttons or inputs are obscured by the bottom navigation bar.
-3. **Cross-Role Check:** Verify that actions taken in Student mode correctly reflect in Tutor mode (and vice versa).
-4. **Build Verification:** Run `npm run build` to verify clean compilation with zero lint or bundling errors so Capacitor can sync to Android Studio.
+2. **Bottom Nav Spacing Check:** Confirm that no buttons or inputs are obscured by the 5-tab bottom navigation bar.
+3. **Cross-Role Check:** Verify that actions taken in Student mode correctly reflect in Mentor mode (and vice versa).
+4. **Build Verification:** Run `npm run build:css` and `npm run build` to verify clean compilation with zero lint or bundling errors so Capacitor can sync to Android Studio.
 
 ---
 
@@ -205,9 +221,10 @@ When preparing code changes for version control:
 * Use concise, structured commit messages in the format: `[Area] Brief description`
 * Examples:
   * `[Auth] Add mobile login and session restoration`
-  * `[Tutor] Add recurring availability slot picker`
+  * `[Mentor] Add recurring availability slot picker`
   * `[Sessions] Implement direct payment reference submission`
   * `[ServiceHours] Add trigger for volunteer hours auto-credit`
+  * `[Classroom] Add meeting controls toolbar`
   * `[Android] Configure Capacitor cleartext traffic rules`
 
 ---
@@ -224,13 +241,14 @@ When preparing code changes for version control:
 8. **NEVER** use `dangerouslySetInnerHTML` on user-submitted content.
 9. **NEVER** leave temporary debug `console.log` clutter in production-bound files.
 10. **NEVER** make destructive changes without explicit user approval.
+11. **NEVER use raw emojis as UI icons in React components** — always implement proper vector SVGs or Font Awesome icons for buttons, navigation tabs, header actions, and status badges.
 
 ---
 
 ## 13. Project Folder Structure Blueprint
 
 ```
-MentorLink/
+MentorLinks/
 ├── .agent/                             # AI Agent Skills & Workflow Directives
 │   └── skills/                         # Domain skill cheat sheets (architecture, database, etc.)
 ├── android/                            # Capacitor Android Studio native project
@@ -242,6 +260,8 @@ MentorLink/
 │   └── js/                             # Shared client scripts & runtime helpers
 ├── docs/                               # Project Architecture, Schemas & Documentation
 │   ├── PRD.md                          # Product Requirements Document
+│   ├── student_flow_spec.md            # Dedicated Student 5-tab flow specification
+│   ├── mentor_flow_spec.md             # Dedicated Mentor 5-tab flow specification
 │   ├── database_schema_design.md       # Relational database schema & data dictionary
 │   ├── file_structure.md               # Definitive file placement plan
 │   ├── security.md                     # Security architecture & mobile container hardening
@@ -259,31 +279,34 @@ MentorLink/
 ├── src/                                # Core Application Source Code (React.js)
 │   ├── assets/                         # Bundled assets (icons, illustrations, placeholders)
 │   ├── components/                     # Reusable UI Components
+│   │   ├── chat/                       # ChatThread, MessageBubble, ChatInputBar
 │   │   ├── common/                     # Button, Input, Modal, Badge, Card, BottomSheet, Toast
 │   │   ├── layout/                     # MobileContainer, BottomNav, TopHeader
+│   │   ├── meeting/                    # VideoFeed, MeetingControls, MeetingChat, SessionNotesPad
 │   │   └── tutor/                      # TutorCard, SlotPicker, SubjectBadgeList, ReviewCard
 │   ├── context/                        # AuthContext, AppContext (dual-role switcher)
 │   ├── pages/                          # Mobile Screen Views (Routed Pages)
 │   │   ├── auth/                       # LoginScreen, RegisterScreen, ForgotPasswordScreen
-│   │   ├── student/                    # HomeScreen, FindTutorScreen, TutorProfileScreen, BookSessionScreen
-│   │   ├── tutor/                      # TutorDashboard, TutorSetupScreen, ManageScheduleScreen, ManageSubjectsScreen, ServiceHoursScreen, IncomingBookingsScreen
-│   │   ├── sessions/                   # MySessionsScreen, SessionDetailsScreen, SessionNotesPad, RateSessionModal
-│   │   └── profile/                    # ProfileScreen, EditProfileScreen
+│   │   ├── student/                    # StudentHomeScreen, ExploreScreen, TutorProfileScreen, BookSessionScreen
+│   │   ├── mentor/                     # MentorHomeScreen, StudentsRosterScreen, ManageScheduleScreen, ManageSubjectsScreen
+│   │   ├── messages/                   # MessagesScreen, ChatDetailScreen
+│   │   ├── sessions/                   # StudentSessionsScreen, MentorSessionsScreen, SessionDetailsScreen, VirtualClassroomScreen
+│   │   └── profile/                    # StudentProfileScreen, MentorProfileScreen, EditProfileScreen, HelpCenterScreen
 │   ├── services/                       # Supabase API Service Layer
-│   │   ├── authService.js              # Auth & user profile helpers
+│   │   ├── authService.js              # Auth, profiles & notification settings
+│   │   ├── messageService.js           # Chat threads & real-time messaging
 │   │   ├── reportService.js            # Service hours summary generator & export
 │   │   ├── reviewService.js            # Review submission & ratings queries
-│   │   ├── sessionService.js           # Bookings, payments, session notes
+│   │   ├── sessionService.js           # Bookings, payments, session notes, classroom
 │   │   ├── supabaseClient.js           # Supabase client initialization (anonKey)
-│   │   └── tutorService.js             # Tutor directory, filters, availability slots
+│   │   └── tutorService.js             # Mentor directory, filters, availability slots
 │   ├── utils/                          # Helper Functions (constants.js, dateUtils.js, formatters.js)
 │   ├── App.jsx                         # Main Router, Route Guards & Shell Layout Wrapper
 │   ├── index.css                       # Tailwind CSS directives & mobile tokens
 │   └── main.jsx                        # React root entry point
-├── capacitor.config.json               # Capacitor configuration (appId: com.mentorlink.app)
+├── capacitor.config.json               # Capacitor configuration (appId: com.mentorlinks.app)
 ├── index.html                          # Root HTML container for Vite React mount
 ├── package.json                        # Project dependencies & build scripts
 ├── tailwind.config.js                  # Tailwind CSS configuration
 └── vite.config.js                      # Vite build configuration (base: './')
 ```
-

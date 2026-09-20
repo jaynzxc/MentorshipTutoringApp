@@ -1,13 +1,13 @@
 ---
 name: system-flow
-description: End-to-end system flows, cross-panel module connections, database table mappings, and lifecycles linking Student, Tutor, Direct Pay, and Community Service Hours in MentorLink. Use when connecting modules, verifying data consistency, or validating that all roles are properly wired together.
+description: End-to-end system flows, cross-panel module connections, database table mappings, and lifecycles linking Student, Mentor, Direct Pay, In-App Messaging, Virtual Classroom, and Community Service Hours in MentorLinks. Use when connecting modules, verifying data consistency, or validating that all roles are properly wired together.
 ---
 
-# End-to-End System Flow Skill (MentorLink)
+# End-to-End System Flow Skill (MentorLinks)
 
 ## Goal
 
-Provide a definitive, unified map of the entire peer mentorship and tutoring matching lifecycle linking **Student (Learner)**, **Peer Tutor (Mentor)**, **Direct Payment Tracking**, **Session Execution**, and **University Community Service Hours Accreditation** in **MentorLink**.
+Provide a definitive, unified map of the entire peer mentorship lifecycle linking **Student (Learner)**, **Peer Mentor (Tutor)**, **Direct Payment Tracking**, **In-App Messaging**, **Virtual Classroom**, and **University Community Service Hours Accreditation** in **MentorLinks** (*"Connect. Learn. Grow."*).
 
 ---
 
@@ -15,19 +15,18 @@ Provide a definitive, unified map of the entire peer mentorship and tutoring mat
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                       MENTORLINK SYSTEM LIFECYCLE MAP                       │
+│                      MENTORLINKS SYSTEM LIFECYCLE MAP                       │
 └─────────────────────────────────────────────────────────────────────────────┘
 
   [1. ONBOARDING & PROFILE SETUP]
-       User creates account (High School or College, School Name).
-       Peer Tutor activates Mentor Mode: sets bio, qualified subjects, 
-       hourly rate (or ₱0 volunteer), payment info, & weekly availability slots.
+       User creates account (Student or Mentor, School, Course, Year Level, Interests).
+       Mentor activates profile: sets bio, subjects, rate (or ₱0 volunteer), 
+       mentoring style, and weekly availability slots.
                                      │
                                      ▼
-  [2. DISCOVERY & FILTERING]
-       Student searches by Subject/Topic (e.g., Pre-Calculus, Java Programming) -> 
-       filters by Grade Level, Rate (Free vs. Paid), & Available Days ->
-       views Tutor Profile, reviews, and open calendar slots.
+  [2. DISCOVERY & FILTERING (Student Explore Tab)]
+       Student searches by Subject/Topic -> filters by Category, Rate, & Day ->
+       views Mentor Profile, ratings, and open calendar slots.
                                      │
                                      ▼
   [3. BOOKING INITIATION & DIRECT PAYMENT]
@@ -37,121 +36,109 @@ Provide a definitive, unified map of the entire peer mentorship and tutoring mat
        Session updates (payment_status: 'payment_submitted').
                                      │
                                      ▼
-  [4. TUTOR CONFIRMATION]
-       Tutor verifies payment receipt -> accepts booking ->
-       Session updates (status: 'confirmed', payment_status: 'confirmed') ->
-       Meeting link / campus location shared with both student and tutor.
+  [4. MENTOR CONFIRMATION / DECLINE]
+       Mentor reviews request in Incoming Requests / Sessions tab:
+       ├─► ACCEPT: Verifies payment -> status = 'confirmed', payment_status = 'confirmed'.
+       └─► DECLINE: Selects reason -> status = 'declined', decline_reason = '...'.
        *(Volunteer sessions bypass payment and confirm directly upon acceptance)*
                                      │
                                      ▼
-  [5. SESSION EXECUTION & NOTES]
-       Student and Tutor meet at scheduled time ->
-       Tutor records key Session Notes & study takeaways in app ->
-       Tutor marks session as 'completed'.
+  [5. REAL-TIME CHAT & VIRTUAL CLASSROOM]
+       Student & Mentor chat in-app with embedded session reminder card.
+       10 minutes prior to scheduled start -> "Join Session" unlocks ->
+       Both launch in-app Virtual Classroom (video, audio, chat, screen share).
                                      │
                                      ▼
-  [6. ACCREDITATION & PEER REVIEW]
-       ├─► STUDENT: Leaves 1–5 star rating & feedback -> updates Tutor average rating.
-       └─► TUTOR: If volunteer session -> PostgreSQL trigger automatically credits 
+  [6. SESSION EXECUTION, NOTES & COMPLETION]
+       Mentor drafts post-session study takeaways in SessionNotesPad ->
+       Mentor marks session 'completed'.
+                                     │
+                                     ▼
+  [7. ACCREDITATION & PEER REVIEW]
+       ├─► STUDENT: Leaves 1–5 star rating & review -> recalculates Mentor average rating.
+       └─► MENTOR: If volunteer session -> PostgreSQL trigger automatically credits 
            hours to `total_service_hours` & generates verifiable record in 
            `service_hour_logs` for university accreditation export.
 ```
 
 ---
 
-## 2. Cross-Role Mobile Screen Mapping Matrix
+## 2. Cross-Role Mobile Screen Mapping Matrix (Dual 5-Tab Architecture)
 
-Every action performed by a Student has a direct, synchronized reflection in the Tutor’s mobile interface:
-
-| Domain / Lifecycle | Student (Learner) Mobile View | Peer Tutor (Mentor) Mobile View | Shared Supabase Table(s) |
+| Lifecycle Stage | Student Mobile View (5 Tabs) | Mentor Mobile View (5 Tabs) | Shared Supabase Table(s) |
 | :--- | :--- | :--- | :--- |
-| **Profile & Onboarding** | `ProfileScreen.jsx` (Student info, school name) | `TutorSetupScreen.jsx` (Subjects, rate, bio) | `profiles`, `tutor_profiles` |
-| **Discovery & Search** | `FindTutorScreen.jsx` (Filters, search bar) | `TutorCard.jsx` (Public preview of tutor profile) | `tutor_profiles`, `tutor_subjects` |
-| **Availability & Slots** | `SlotPickerModal.jsx` (Selects available slot) | `ManageScheduleScreen.jsx` (Sets recurring days/hours) | `tutor_availability` |
-| **Booking & Payment** | `BookSessionScreen.jsx` (Topic input, submits Ref #) | `IncomingBookingsScreen.jsx` (Reviews request & Ref #) | `sessions` |
-| **Payment Verification** | `SessionCard.jsx` (Status: "Payment Submitted") | `ConfirmPaymentModal.jsx` (Tutor clicks "Confirm") | `sessions` |
-| **Active / Upcoming** | `MySessionsScreen.jsx` (Join meeting link, location) | `TutorSessionsScreen.jsx` (Upcoming sessions list) | `sessions` |
-| **Session Notes** | `SessionDetailsScreen.jsx` (Reads summary notes) | `SessionNotesPad.jsx` (Tutor drafts & saves notes) | `sessions` |
-| **Session Completion** | Receives completion prompt | Clicks "Mark Completed" button | `sessions` |
-| **Service Hours** | *N/A (Learner does not track)* | `ServiceHoursScreen.jsx` (Verifiable hours summary) | `service_hour_logs`, `tutor_profiles` |
-| **Ratings & Feedback** | `RateSessionModal.jsx` (Submits 1–5 stars & review) | `TutorReviewsScreen.jsx` (Views feedback received) | `reviews`, `tutor_profiles` |
+| **Tab 1: Home** | `StudentHomeScreen.jsx` (Hero, stats, next session, recommended mentors) | `MentorHomeScreen.jsx` (2x2 stats, pending requests, upcoming sessions) | `profiles`, `tutor_profiles`, `sessions` |
+| **Tab 2: Directory / Roster** | `ExploreScreen.jsx` (Search, category filters, mentor list) | `StudentsRosterScreen.jsx` (Active & past mentees, search, chat trigger) | `tutor_profiles`, `tutor_subjects`, `sessions` |
+| **Tab 3: Messaging** | `MessagesScreen.jsx` $\rightarrow$ `ChatDetailScreen.jsx` | `MessagesScreen.jsx` $\rightarrow$ `ChatDetailScreen.jsx` | `conversations`, `messages`, `sessions` |
+| **Tab 4: Sessions** | `StudentSessionsScreen.jsx` (`Upcoming`, `Completed`, `Cancelled`) | `MentorSessionsScreen.jsx` (`Upcoming`, `Requests`, `Completed`) | `sessions`, `tutor_subjects` |
+| **Tab 5: Profile** | `StudentProfileScreen.jsx` (Interests, progress, support) | `MentorProfileScreen.jsx` (Schedule, subjects, service hours export) | `profiles`, `tutor_profiles`, `service_hour_logs` |
+| **Booking Flow** | `BookSessionScreen.jsx` (Slot selection, payment ref submit) | `IncomingBookingsScreen.jsx` (Accept/Decline modal) | `sessions`, `tutor_availability` |
+| **Virtual Classroom** | `VirtualClassroomScreen.jsx` (Video stream, meeting controls) | `VirtualClassroomScreen.jsx` (Video stream, meeting controls, notes) | `sessions` |
+| **Post-Session Notes**| `SessionDetailsScreen.jsx` (Reads study takeaways) | `SessionNotesPad.jsx` (Writes & saves study notes) | `sessions` |
+| **Accreditation Export**| *N/A (Learner does not track)* | `ServiceHoursScreen.jsx` (Printable community service summary) | `service_hour_logs`, `tutor_profiles` |
+| **Ratings & Feedback** | `RateSessionModal.jsx` (Submits 1–5 stars + review) | `MentorReviewsScreen.jsx` (Views received peer feedback) | `reviews`, `tutor_profiles` |
 
 ---
 
-## 3. Detailed End-to-End Sequence Flows
+## 3. Detailed Sequence Diagrams
 
-### Flow A: Discovery, Booking, & Direct Pay Verification
+### Flow A: Booking Request, Direct Pay & Mentor Confirmation/Decline
 
 ```mermaid
 sequenceDiagram
     autonumber
     actor Student
-    participant App as MentorLink Mobile App
+    participant App as MentorLinks Mobile App
     participant DB as Supabase PostgreSQL
-    actor Tutor
+    actor Mentor
 
-    Student->>App: Filters tutors by subject ("Calculus 1") & rate
+    Student->>App: Filters mentors by subject ("Calculus 1") in Explore
     App->>DB: SELECT * FROM tutor_profiles + tutor_subjects
-    DB-->>App: Returns matching qualified tutors
-    Student->>App: Selects tutor & picks open calendar slot
-    Student->>App: Submits session topic ("Derivatives Homework")
+    DB-->>App: Returns available mentors
+    Student->>App: Selects slot & enters topic ("Derivatives Review")
     App->>DB: INSERT into sessions (status: 'pending', payment_status: 'unpaid')
-    DB-->>Tutor: Booking alert in Incoming Requests
-    Student->>App: Sends payment via GCash/Maya & enters Ref # ("GC-948102")
+    Student->>App: Transfers funds via GCash/Maya & enters Ref # ("GC-948102")
     App->>DB: UPDATE sessions SET payment_status = 'payment_submitted', payment_reference = 'GC-948102'
-    Tutor->>App: Inspects Ref # and verifies funds in payment app
-    Tutor->>App: Taps "Confirm Payment & Accept Booking"
-    App->>DB: UPDATE sessions SET status = 'confirmed', payment_status = 'confirmed'
-    DB-->>Student: Push notification: "Session confirmed by tutor!"
+    DB-->>Mentor: Session request arrives in Mentor Tab 1 (Home) & Tab 4 (Sessions)
+    alt Mentor Accepts
+        Mentor->>App: Verifies payment & taps "Accept Booking"
+        App->>DB: UPDATE sessions SET status = 'confirmed', payment_status = 'confirmed'
+        DB-->>Student: Push notification & session moves to Upcoming
+    else Mentor Declines
+        Mentor->>App: Taps "Decline", selects reason ("Schedule conflict")
+        App->>DB: UPDATE sessions SET status = 'declined', decline_reason = 'Schedule conflict'
+        DB-->>Student: Booking status updates to Declined with reason
+    end
 ```
 
 ---
 
-### Flow B: Session Completion, Notes Pad, & Community Hours Auto-Accreditation
+### Flow B: Virtual Classroom & Community Service Hours Accreditation
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Tutor
-    participant App as MentorLink Mobile App
+    actor Mentor
+    participant App as MentorLinks Mobile App
     participant DB as Supabase PostgreSQL
-    participant Trigger as DB Trigger (trg_credit_service_hours)
+    participant Trigger as DB Trigger (handle_session_completion_service_hours)
     actor Student
 
-    Note over Tutor, Student: Session conducted via Google Meet or in-person library
-    Tutor->>App: Opens Session Notes Pad & types key concepts covered
-    App->>DB: UPDATE sessions SET session_notes = 'Reviewed chain rule & product rule'
-    Tutor->>App: Taps "Mark Session Completed"
-    App->>DB: UPDATE sessions SET status = 'completed'
+    Note over Mentor, Student: 10 minutes prior to scheduled start
+    App->>Student: Unlocks "Join Session" button
+    App->>Mentor: Unlocks "Join Session" button
+    Mentor->>App: Enters Virtual Classroom
+    Student->>App: Enters Virtual Classroom
+    Note over Mentor, Student: Conduct video call, screen share, and session notes
+    Mentor->>App: Saves notes in SessionNotesPad & taps "End & Complete Session"
+    App->>DB: UPDATE sessions SET status = 'completed', session_notes = '...'
     alt If counts_toward_service_hours == true (Volunteer)
         DB->>Trigger: Fires on status = 'completed'
-        Trigger->>DB: INSERT into service_hour_logs (tutor_id, hours, subject)
+        Trigger->>DB: INSERT into service_hour_logs
         Trigger->>DB: UPDATE tutor_profiles SET total_service_hours += duration_hours
     end
-    DB-->>Student: Session status changes to 'Completed'; unlocks "Rate Tutor" button
-    DB-->>Tutor: Tutor sees total accredited hours incremented in Service Hours tab
-```
-
----
-
-### Flow C: Peer Review & Rating Recalculation
-
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Student
-    participant App as MentorLink Mobile App
-    participant DB as Supabase PostgreSQL
-    participant Trigger as DB Trigger (trg_update_tutor_rating)
-    actor Tutor
-
-    Student->>App: Opens RateSessionModal for completed session
-    Student->>App: Selects 5 Stars + writes "Super patient tutor!"
-    App->>DB: INSERT into reviews (session_id, tutor_id, rating: 5, comment: '...')
-    DB->>Trigger: Fires on new review row
-    Trigger->>DB: Recalculates AVG(rating) & increments completed_sessions_count
-    Trigger->>DB: UPDATE tutor_profiles SET average_rating = new_avg
-    DB-->>Tutor: Public profile & dashboard reflects updated rating & review
+    DB-->>Student: Unlocks "Rate Mentor" modal
+    DB-->>Mentor: Updates Service Hours in Profile tab
 ```
 
 ---
@@ -160,23 +147,23 @@ sequenceDiagram
 
 ### `sessions.status` Lifecycle:
 1. `pending`: Initial state upon booking creation.
-2. `confirmed`: Transitioned only when tutor accepts (and verifies payment, if applicable).
-3. `completed`: Transitioned only when tutor marks the session finished.
-4. `cancelled`: Allowed by student (if still `pending`) or by tutor (with notice).
+2. `confirmed`: Transitioned only when mentor accepts (and confirms payment, if applicable).
+3. `declined`: Mentor rejects booking with specified `decline_reason`.
+4. `completed`: Transitioned only when mentor marks the session finished.
+5. `cancelled`: Allowed by student (if still `pending`) or by mentor (with notice).
 
 ### `sessions.payment_status` Lifecycle:
 1. `unpaid`: Initial state when booked.
-2. `payment_submitted`: Student has transferred funds and provided the reference number.
-3. `confirmed`: Tutor verified the payment in their payment app and confirmed receipt.
+2. `payment_submitted`: Student has transferred funds and entered the reference number.
+3. `confirmed`: Mentor verified payment in their payment app and confirmed receipt.
 *(For volunteer sessions with rate ₱0.00, `payment_status` defaults to `confirmed` automatically).*
 
 ---
 
-## 5. End-to-End Checklist for Developers & Agents
+## 5. End-to-End Cross-Role Checklist
 
-Before implementing or connecting any module:
-
-1. **Verify Dual-Perspective Impact:** Does a change made by the Student immediately update the corresponding Tutor screen (and vice-versa)?
-2. **Verify Payment State Safety:** Is the student restricted to submitting payment references, while only the tutor has the button to confirm?
-3. **Verify Community Hours Trigger:** Does marking a volunteer session as `completed` automatically record a row in `service_hour_logs` and update `total_service_hours`?
-4. **Verify Mobile Viewport Layout:** Are all views tested for mobile responsiveness ($360\text{px}$–$430\text{px}$) with proper bottom navigation clearance?
+1. **Verify Dual-Perspective Impact:** Does a change made by the Student immediately update the corresponding Mentor screen (and vice-versa)?
+2. **Verify Payment State Safety:** Is the student restricted to submitting payment references, while only the mentor has the button to confirm?
+3. **Verify Decline Flow:** Does declining require a reason and set status to `declined` cleanly?
+4. **Verify Community Hours Trigger:** Does marking a volunteer session as `completed` automatically record a row in `service_hour_logs` and update `total_service_hours`?
+5. **Verify 5-Tab Navigation:** Are all views appropriately routed for Student vs Mentor with `pb-24` clearance?

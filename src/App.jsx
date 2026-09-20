@@ -73,11 +73,10 @@ export default function App() {
             (subject, idx) => (
               <button
                 key={subject}
-                className={`touch-target text-xs px-3 py-1.5 rounded-xl font-medium shrink-0 transition-all ${
-                  idx === 0
+                className={`touch-target text-xs px-3 py-1.5 rounded-xl font-medium shrink-0 transition-all ${idx === 0
                     ? 'bg-indigo-600 text-white shadow-sm'
                     : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900'
-                }`}
+                  }`}
               >
                 {subject}
               </button>
@@ -156,9 +155,8 @@ export default function App() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`touch-target flex flex-col items-center justify-center flex-1 transition-colors ${
-                isActive ? 'text-indigo-600 font-bold' : 'text-slate-400 hover:text-slate-600'
-              }`}
+              className={`touch-target flex flex-col items-center justify-center flex-1 transition-colors ${isActive ? 'text-indigo-600 font-bold' : 'text-slate-400 hover:text-slate-600'
+                }`}
             >
               <span className="text-base leading-none mb-1">{tab.icon}</span>
               <span className="text-[10px] tracking-tight">{tab.label}</span>

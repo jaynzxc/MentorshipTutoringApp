@@ -29,3 +29,4 @@ docs/*
 !docs/android_build_guide.md
 !docs/system_flowchart.md
 !docs/key_features.md
+!docs/mobile_content_guide.md

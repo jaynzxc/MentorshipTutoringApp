@@ -1,20 +1,22 @@
-# MentorLink — Browser Mobile Preview & DevTools Testing Guide
+# MentorLinks — Browser Mobile Preview & DevTools Testing Guide
 
-**Project Title:** MentorLink — Mentorship & Tutoring Matching Mobile Application  
+**Project Title:** MentorLinks — Mentorship & Tutoring Matching Mobile Application  
+**Tagline:** *"Connect. Learn. Grow."*  
 **Document Purpose:** Complete developer procedure for running, previewing, and debugging the mobile application inside desktop browsers using Developer Tools Device Mode (Inspect Tool), eliminating the need for heavy Android emulators during day-to-day coding.  
 **Target Location:** `docs/browser_mobile_preview_guide.md`  
-**Version:** 1.0  
+**Version:** 2.0  
 
 ---
 
 ## 1. Overview & Development Philosophy
 
-Because MentorLink is engineered strictly for mobile screen ergonomics ($360\text{px}$–$430\text{px}$ viewports, touch targets $\ge 44\text{px}$, sticky top header, and fixed bottom navigation bar), you do **not** need to boot an Android Studio virtual emulator for rapid UI and feature development.
+Because MentorLinks is engineered strictly for mobile screen ergonomics ($360\text{px}$–$430\text{px}$ viewports, touch targets $\ge 44\text{px}$, sticky top header, and fixed 5-tab bottom navigation bar), you do **not** need to boot an Android Studio virtual emulator for rapid UI and feature development.
 
 Using **Chrome / Edge / Brave Developer Tools (Device Toolbar)** gives you:
 * Instant Hot Module Replacement (HMR) within $\approx 100\text{ms}$.
 * Accurate pixel-perfect mobile screen simulation.
 * Touch cursor emulation for swipe and tap gestures.
+* Dual 5-tab testing for both Student and Mentor modes.
 * Network throttling to test spotty campus Wi-Fi and offline detection.
 
 ---
@@ -37,8 +39,7 @@ npm run dev
   ```
 * Vite will keep watching all files inside `src/`. Any edit to a component updates your browser screen instantly.
 
-### Terminal 2 (Optional): Real-Time CSS Watcher
-If you are actively modifying design tokens, custom safe-area rules, or animations in `assets/css/input.css`, open a second terminal tab and run:
+### Terminal 2: Real-Time Tailwind CSS Watcher
 ```bash
 npm run watch:css
 ```
@@ -62,62 +63,41 @@ npm run watch:css
 
 ## 4. Recommended Mobile Viewport Matrix
 
-At the top of the browser viewport, click the **Dimensions** dropdown to select a device preset. We recommend testing against these standard device categories:
+At the top of the browser viewport, click the **Dimensions** dropdown to select a device preset:
 
 | Device Preset | Screen Dimensions | Viewport Category | Testing Focus |
 | :--- | :--- | :--- | :--- |
-| **Samsung Galaxy S8+ / S20** | **$360\text{px} \times 740\text{px}$** | Minimum Compact Android | Verify subject chips and buttons wrap cleanly without horizontal blowout. |
-| **iPhone 12 / 13 / 14 Pro** | **$390\text{px} \times 844\text{px}$** | Standard Baseline | Baseline ergonomics; verify card typography and avatar alignments. |
-| **Google Pixel 7** | **$412\text{px} \times 915\text{px}$** | Standard Android | Default Android device size; verify bottom navigation height. |
+| **Samsung Galaxy S8+ / S20** | **$360\text{px} \times 740\text{px}$** | Minimum Compact Android | Verify chips wrap cleanly without horizontal blowout. |
+| **iPhone 12 / 13 / 14 Pro** | **$390\text{px} \times 844\text{px}$** | Standard Baseline | Baseline ergonomics; verify cards and avatar alignments. |
+| **Google Pixel 7** | **$412\text{px} \times 915\text{px}$** | Standard Android | Default Android device size; verify 5-tab navigation height. |
 | **iPhone 14 / 15 Pro Max** | **$430\text{px} \times 932\text{px}$** | Maximum Mobile Boundary | Confirm `max-w-md mx-auto` stays centered with clean margins. |
 
 > [!TIP]
-> Always set the **Zoom Dropdown** next to the dimensions to **`100%`** (not "Fit to window") to ensure UI text sizes and button heights appear at their true-to-life physical scale.
+> Always set the **Zoom Dropdown** next to the dimensions to **`100%`** (not "Fit to window") to ensure UI text sizes and button heights appear at their true physical scale.
 
 ---
 
-## 5. Simulating Native Mobile Touch Interactions
+## 5. Dual 5-Tab Testing Checklist
 
-When Device Mode is enabled, DevTools alters your cursor and browser behaviors to match a smartphone:
+When toggling between roles in the app header:
 
-1. **Touch Cursor (Circular Tap Dot):**
-   * Your mouse cursor appears as a gray circle simulating a human finger.
-   * Click and drag to simulate smooth finger scrolling.
-2. **Horizontal Chip Scrolling:**
-   * Test the subject filter chips (e.g. *Calculus I*, *College Physics*) by clicking and dragging horizontally to verify smooth scrolling without scrollbars (`.no-scrollbar`).
-3. **Bottom Navigation Clearance Check:**
-   * Scroll down to the bottom of every page.
-   * Ensure that action buttons (like *"Book Mentorship Session"*) or form inputs are never hidden behind the fixed bottom navigation bar (`pb-24` clearance rule).
-4. **Dual-Role Switcher:**
-   * Tap the top-right pill button (**`🎓 Learner` $\leftrightarrow$ `💼 Mentor`**) to toggle role contexts in real time.
+### A. Student 5-Tab Verification (`role = 'student'`)
+1. `🏠 Home`: Verify quick metrics, upcoming session alert card, and recommended mentors carousel.
+2. `🔍 Explore`: Test search query input, category pills, max hourly rate filter, and volunteer-only toggle.
+3. `💬 Messages`: Test chat thread navigation, message bubbles, timestamp alignment, and input bar.
+4. `📅 Sessions`: Test filter tabs (`Upcoming`, `Completed`, `Cancelled`), payment reference submission, and Virtual Classroom join button.
+5. `👤 Profile`: Test learning progress indicator, saved mentors list, Help Center ticket modal, and role switcher.
 
----
-
-## 6. Network Throttling & Offline Testing
-
-High school and college students frequently experience spotty campus Wi-Fi or depleted mobile data. You can simulate these conditions directly in DevTools:
-
-### 6.1 Simulating Spotty Campus Wi-Fi (3G)
-1. In DevTools, open the **Network** tab.
-2. Click the **Throttling** dropdown (defaults to "No throttling").
-3. Select **Fast 3G** or **Slow 3G**.
-4. Test your screens:
-   * Verify that `LoadingSkeleton` placeholder cards appear smoothly while data is being fetched.
-   * Confirm that submit buttons show a loading spinner and disable duplicate taps.
-
-### 6.2 Simulating Offline Mode
-1. In the **Network** tab throttling dropdown, select **Offline**.
-2. Trigger any action:
-   * Verify that the app does not crash or throw unhandled exceptions.
-   * Verify that the subtle top offline banner appears:  
-     `⚠ You are offline. Changes will sync once reconnected.`
-   * Verify error toasts cleanly display *"Network connection error. Please check your mobile data or Wi-Fi."*
+### B. Mentor 5-Tab Verification (`role = 'mentor'`)
+1. `🏠 Home`: Verify 2x2 metric cards (Earnings, Service Hours, Rating, Requests), incoming booking requests with Accept/Decline triggers.
+2. `👥 Students`: Verify roster of mentees, search filter, and quick chat shortcut.
+3. `💬 Messages`: Verify direct chat with students and embedded session reminder banner.
+4. `📅 Sessions`: Verify filter tabs (`Upcoming`, `Requests`, `Completed`), decline modal with reason input, and classroom launch.
+5. `👤 Profile`: Verify availability settings, subjects offered, and university service hours summary export.
 
 ---
 
-## 7. Testing on Your Physical Smartphone via Wi-Fi
-
-You can also run the web app directly on your physical smartphone over your local home/campus Wi-Fi without building an APK:
+## 6. Testing on Physical Smartphone via Local Wi-Fi
 
 1. Ensure your computer and smartphone are connected to the **same Wi-Fi network**.
 2. Start the dev server with the `--host` flag:
@@ -130,16 +110,4 @@ You can also run the web app directly on your physical smartphone over your loca
    ➜  Network: http://192.168.1.50:5173/
    ```
 4. Open your phone's browser (Chrome on Android or Safari on iOS) and navigate to the **Network URL** (e.g., `http://192.168.1.50:5173`).
-5. You can now tap, scroll, and test touch targets directly on physical mobile hardware!
-
----
-
-## 8. Common DevTools Gotchas & Tips
-
-| Problem | Cause | Solution |
-| :--- | :--- | :--- |
-| **Touch cursor disappeared** | Clicked outside the device container. | Re-toggle `Ctrl + Shift + M` or click inside the device frame. |
-| **Fonts look tiny or blurry** | Zoom dropdown is set to "Fit to window" (e.g. 50%). | Change zoom to **100%**. |
-| **Tailwind changes not showing** | `watch:css` process is not running. | Run `npm run watch:css` in a second terminal to recompile `assets/css/output.css`. |
-| **Old cached styles stuck** | Browser hard cache. | Right-click the browser reload button while DevTools is open and select **Empty Cache and Hard Reload** (`Ctrl + F5`). |
-| **Supabase session lost on refresh** | Browser in Private / Incognito mode. | Use a standard browser profile so `localStorage` persists your login token across reloads. |
+5. You can now test touch targets, swipe gestures, and responsiveness directly on physical mobile hardware.
