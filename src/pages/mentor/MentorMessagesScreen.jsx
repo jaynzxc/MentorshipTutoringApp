@@ -1,0 +1,269 @@
+import React, { useState } from 'react';
+
+/**
+ * Mentor Messages Screen (Tab 3: MentorMessagesScreen)
+ * Follows the clean, organized layout and architecture of the student MessagesScreen.
+ * Displays active conversation threads with student avatars, online status dots, unread badges, and search.
+ * Strictly uses vector SVGs — zero raw emojis in UI.
+ */
+export default function MentorMessagesScreen({
+  conversations,
+  onSelectConversation,
+  onViewStudents,
+}) {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Default seed conversations for peer mentor Alex Santos
+  const defaultConversations = [
+    {
+      id: 'conv-daniela-gonzales',
+      student: {
+        id: 'std-1',
+        name: 'Daniela Gonzales',
+        course: 'BS Information Technology · 3rd Year',
+        school: 'Bestlink College of the Philippines',
+        avatarBg: 'bg-sky-600',
+        initials: 'DG',
+        isOnline: true,
+        isVerified: true,
+      },
+      lastMessage: 'Thank you so much, Alex! That sounds super helpful. See you on Friday at 7:00 PM!',
+      time: '6:43 PM',
+      unread: true,
+      unreadCount: 1,
+      hasUpcomingSession: true,
+      upcomingSessionTopic: 'JavaScript Functions, parameters, and return values',
+      sessionDate: 'Sept 25, 2026',
+    },
+    {
+      id: 'conv-mark-reyes',
+      student: {
+        id: 'std-2',
+        name: 'Mark Reyes',
+        course: 'BS Computer Science · 2nd Year',
+        school: 'Bestlink College of the Philippines',
+        avatarBg: 'bg-teal-600',
+        initials: 'MR',
+        isOnline: false,
+        isVerified: true,
+      },
+      lastMessage: 'You: Remember to verify the time complexity of the tree traversal.',
+      time: '3:20 PM',
+      unread: false,
+      unreadCount: 0,
+      hasUpcomingSession: false,
+      upcomingSessionTopic: null,
+      sessionDate: null,
+    },
+    {
+      id: 'conv-sofia-garcia',
+      student: {
+        id: 'std-3',
+        name: 'Sofia Garcia',
+        course: 'BS Information Technology · 4th Year',
+        school: 'Bestlink College of the Philippines',
+        avatarBg: 'bg-purple-600',
+        initials: 'SG',
+        isOnline: true,
+        isVerified: true,
+      },
+      lastMessage: 'Sofia: The responsive UI component looks great on mobile! Thanks for the guidance.',
+      time: 'Yesterday',
+      unread: false,
+      unreadCount: 0,
+      hasUpcomingSession: false,
+      upcomingSessionTopic: null,
+      sessionDate: null,
+    },
+  ];
+
+  const threadList = conversations && conversations.length > 0 ? conversations : defaultConversations;
+
+  const filteredThreads = threadList.filter((thread) => {
+    if (!searchQuery.trim()) return true;
+    const q = searchQuery.toLowerCase();
+    const name = thread.student?.name?.toLowerCase() || '';
+    const course = thread.student?.course?.toLowerCase() || '';
+    const msg = thread.lastMessage?.toLowerCase() || '';
+    return name.includes(q) || course.includes(q) || msg.includes(q);
+  });
+
+  const totalUnread = threadList.filter((t) => t.unread).length;
+
+  return (
+    <div className="space-y-4 animate-fade-in pb-24">
+      {/* 1. Header with Title & Unread Badge (Matching Student Messages) */}
+      <div className="flex items-center justify-between px-0.5">
+        <div>
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-bold tracking-tight text-slate-900">
+              Messages
+            </h1>
+            {totalUnread > 0 && (
+              <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 border border-sky-200">
+                {totalUnread} new
+              </span>
+            )}
+          </div>
+          <p className="text-xs text-slate-500 font-medium mt-0.5">
+            Chat with your mentees and stay connected.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          onClick={onViewStudents}
+          className="touch-target inline-flex items-center gap-1.5 text-xs font-bold text-sky-600 bg-sky-50 border border-sky-200 px-3.5 py-2 rounded-xl hover:bg-sky-100 active:scale-95 transition-all shadow-2xs"
+          title="View students roster"
+        >
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+          </svg>
+          <span>Students</span>
+        </button>
+      </div>
+
+      {/* 2. Search Conversations Input */}
+      <div className="relative">
+        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+          </svg>
+        </div>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search conversations or students..."
+          className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-9 py-2.5 text-xs font-medium text-slate-800 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all shadow-2xs"
+        />
+        {searchQuery && (
+          <button
+            type="button"
+            onClick={() => setSearchQuery('')}
+            className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
+            aria-label="Clear search"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+          </button>
+        )}
+      </div>
+
+      {/* 3. Conversation Thread List (Matching Student Cards) */}
+      <div className="space-y-2">
+        {filteredThreads.length === 0 ? (
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-8 text-center space-y-3 shadow-xs">
+            <div className="w-14 h-14 rounded-2xl bg-sky-50 text-sky-600 mx-auto flex items-center justify-center border border-sky-100">
+              <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="1.75" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a.75.75 0 0 1-.75-.75c0-.66.195-1.294.553-1.838C3.805 16.89 3 14.567 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
+              </svg>
+            </div>
+            <div className="space-y-1">
+              <h3 className="text-sm font-bold text-slate-900">
+                {searchQuery ? 'No matching conversations' : 'No messages yet'}
+              </h3>
+              <p className="text-xs text-slate-500 max-w-xs mx-auto leading-relaxed">
+                {searchQuery
+                  ? `No conversation found matching "${searchQuery}".`
+                  : 'Conversations with your student mentees will appear here once sessions or chats begin.'}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={onViewStudents}
+              className="touch-target inline-flex items-center gap-1.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-xs transition-all active:scale-[0.98]"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+              </svg>
+              <span>View My Students</span>
+            </button>
+          </div>
+        ) : (
+          filteredThreads.map((thread) => {
+            const student = thread.student || {};
+            const isUnread = thread.unread;
+
+            return (
+              <button
+                key={thread.id}
+                type="button"
+                onClick={() => onSelectConversation(thread)}
+                className={`touch-target w-full text-left bg-white rounded-2xl border transition-all p-3.5 flex items-center gap-3.5 shadow-2xs hover:border-sky-300 active:scale-[0.99] ${
+                  isUnread
+                    ? 'border-sky-200/90 bg-sky-50/20'
+                    : 'border-slate-200/80 hover:bg-slate-50/50'
+                }`}
+              >
+                {/* Student Avatar with Online Indicator */}
+                <div className="relative shrink-0">
+                  <div
+                    className={`w-12 h-12 rounded-full ${student.avatarBg || 'bg-sky-600'} text-white font-bold text-xs flex items-center justify-center shadow-xs`}
+                  >
+                    {student.initials || 'ST'}
+                  </div>
+                  {student.isOnline && (
+                    <span
+                      className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white ring-1 ring-emerald-400"
+                      title="Online"
+                    />
+                  )}
+                </div>
+
+                {/* Content Details */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-1 mb-0.5">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <h3
+                        className={`text-sm truncate ${
+                          isUnread ? 'font-extrabold text-slate-900' : 'font-bold text-slate-800'
+                        }`}
+                      >
+                        {student.name}
+                      </h3>
+                      {student.isVerified && (
+                        <svg className="w-3.5 h-3.5 text-sky-600 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-label="Verified">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </div>
+                    <span
+                      className={`text-[11px] shrink-0 ${
+                        isUnread ? 'font-bold text-sky-600' : 'font-medium text-slate-400'
+                      }`}
+                    >
+                      {thread.time}
+                    </span>
+                  </div>
+
+                  <p className="text-[11px] text-slate-500 font-medium truncate mb-1">
+                    {student.course}
+                  </p>
+
+                  <div className="flex items-center justify-between gap-2">
+                    <p
+                      className={`text-xs truncate ${
+                        isUnread
+                          ? 'font-bold text-slate-900'
+                          : 'font-normal text-slate-600'
+                      }`}
+                    >
+                      {thread.lastMessage}
+                    </p>
+
+                    {/* Unread blue dot indicator */}
+                    {isUnread && (
+                      <span className="w-2.5 h-2.5 rounded-full bg-sky-600 shrink-0 ring-2 ring-sky-100" />
+                    )}
+                  </div>
+                </div>
+              </button>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
+}

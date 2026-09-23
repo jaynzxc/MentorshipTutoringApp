@@ -11,12 +11,15 @@
     "watch:css": "tailwindcss -i ./assets/css/input.css -o ./assets/css/output.css --watch"
   },
   "dependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/core": "^8.5.2",
     "@tailwindcss/cli": "^4.3.3",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.5.2",
     "@vitejs/plugin-react": "^6.1.1",
     "vite": "^8.3.0"
   }

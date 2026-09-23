@@ -8,6 +8,7 @@ export default defineConfig({
   // Ensures all asset URLs resolve relatively (e.g. ./assets/...) inside the Android WebView.
   base: './',
   server: {
+    host: true,
     port: 5173,
     open: false,
   },

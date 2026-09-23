@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">MentorLinks</string>
+    <string name="title_activity_main">MentorLinks</string>
+    <string name="package_name">com.mentorlinks.app</string>
+    <string name="custom_url_scheme">com.mentorlinks.app</string>
+</resources>

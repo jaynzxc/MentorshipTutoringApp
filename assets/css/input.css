@@ -47,15 +47,18 @@ body {
 .touch-target {
   min-height: 44px;
   min-width: 44px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
-/* 3. Bottom Navigation Clearance */
-/* Enforces scrollable views to clear the fixed 5-tab bottom nav (h-16 = 64px + safe margins) */
+/* 3. Bottom Navigation Ergonomics & Clearance */
+.bottom-nav-bar {
+  padding-top: 0.625rem;
+  padding-bottom: max(0.5rem, var(--sab));
+  min-height: 4.25rem;
+}
+
+/* Enforces scrollable views to clear the fixed 5-tab bottom nav (h-17 = 68px + safe margins) */
 .bottom-nav-clearance {
-  padding-bottom: calc(5rem + var(--sab));
+  padding-bottom: calc(5.25rem + var(--sab));
 }
 
 /* 4. Smooth Animations for Mobile Bottom Sheets, Modals & Toasts */
