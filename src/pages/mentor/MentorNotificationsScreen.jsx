@@ -86,8 +86,8 @@ export default function MentorNotificationsScreen({
     {
       id: 'notif-4',
       category: 'system',
-      type: 'accreditation',
-      title: '1.0 Service Hour Accredited',
+      type: 'payment',
+      title: '₱250.00 Direct Payment Settled',
       student: {
         id: 'std-3',
         name: 'Sofia Garcia',
@@ -95,7 +95,7 @@ export default function MentorNotificationsScreen({
         initials: 'SG',
         avatarBg: 'bg-purple-600'
       },
-      message: 'Your completed mentoring session with Sofia Garcia has been verified. 1.0 Community Service Hour has been accredited to your university profile.',
+      message: 'Your completed mentoring session with Sofia Garcia has been finalized. Total fee of ₱250.00 (down payment + remaining balance) was settled via GCash.',
       timestamp: 'Yesterday',
       read: true,
       sessionData: {
@@ -103,7 +103,7 @@ export default function MentorNotificationsScreen({
         topic: 'Mobile-First Wireframing and Auto Layout in Figma',
         date: 'Sept 18, 2026',
         duration: '60 min',
-        serviceHoursCredited: '1.0 hr'
+        totalPaid: '₱250.00'
       }
     }
   ]);

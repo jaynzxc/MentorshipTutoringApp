@@ -259,9 +259,9 @@ export default function HomeScreen({ onNavigateTab, onViewMentorProfile, onViewC
                 </div>
               </div>
 
-              {/* Rate Tag: Volunteer */}
-              <span className="inline-block bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
-                Volunteer (₱0)
+              {/* Rate Tag: Hourly Fee */}
+              <span className="inline-block bg-sky-50 text-sky-700 border border-sky-200 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+                ₱250/hr
               </span>
             </div>
 
@@ -299,8 +299,14 @@ export default function HomeScreen({ onNavigateTab, onViewMentorProfile, onViewC
                       rating: 4.9,
                       sessionsCount: 24,
                       isVerified: true,
-                      rate: '₱0.00 / hr (Volunteer)',
-                      isVolunteer: true,
+                      rate: '₱250.00 / hr',
+                      hourlyRate: 250,
+                      paymentMethods: ['GCash', 'BDO Unibank'],
+                      gcashNumber: '0917-555-0192',
+                      gcashName: 'Alex Santos',
+                      bankName: 'BDO Unibank',
+                      bankAccount: '1092-8834-5512',
+                      bankHolder: 'Alex Santos',
                       avatarBg: 'bg-sky-600',
                       initials: 'AS',
                       bio: "I'm a web development mentor who helps students build their programming skills through practical projects and guided learning.",
@@ -384,7 +390,6 @@ export default function HomeScreen({ onNavigateTab, onViewMentorProfile, onViewC
                       sessionsCount: 18,
                       isVerified: true,
                       rate: '₱200 / session',
-                      isVolunteer: false,
                       avatarBg: 'bg-indigo-600',
                       initials: 'MC',
                       bio: 'BS Computer Science student focused on human-computer interaction, Figma design systems, wireframing, and interactive design prototyping.',

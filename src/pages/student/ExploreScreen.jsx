@@ -37,7 +37,7 @@ export default function ExploreScreen({ onNavigateTab, onBookSession, onViewMent
     'Data Analytics'
   ];
 
-  // Comprehensive Mentor Directory Data
+  // Comprehensive Mentor Directory Data (100% Paid Mentors with GCash / Bank details)
   const mentorsData = [
     {
       id: 'mentor-1',
@@ -47,8 +47,14 @@ export default function ExploreScreen({ onNavigateTab, onBookSession, onViewMent
       rating: 4.9,
       sessionsCount: 24,
       isVerified: true,
-      rate: '₱0.00 / hr (Volunteer)',
-      isVolunteer: true,
+      rate: '₱250.00 / hr',
+      hourlyRate: 250,
+      paymentMethods: ['GCash', 'BDO Unibank'],
+      gcashNumber: '0917-555-0192',
+      gcashName: 'Alex Santos',
+      bankName: 'BDO Unibank',
+      bankAccount: '1092-8834-5512',
+      bankHolder: 'Alex Santos',
       sessionType: 'online', // 'online', 'in-person', 'both'
       availableToday: true,
       availableThisWeek: true,
@@ -68,8 +74,14 @@ export default function ExploreScreen({ onNavigateTab, onBookSession, onViewMent
       rating: 4.8,
       sessionsCount: 18,
       isVerified: true,
-      rate: '₱200 / session',
-      isVolunteer: false,
+      rate: '₱200.00 / hr',
+      hourlyRate: 200,
+      paymentMethods: ['GCash', 'BPI'],
+      gcashNumber: '0928-444-1234',
+      gcashName: 'Maria Cruz',
+      bankName: 'BPI',
+      bankAccount: '2345-6789-0123',
+      bankHolder: 'Maria Cruz',
       sessionType: 'both',
       availableToday: false,
       availableThisWeek: true,
@@ -89,8 +101,14 @@ export default function ExploreScreen({ onNavigateTab, onBookSession, onViewMent
       rating: 4.9,
       sessionsCount: 31,
       isVerified: true,
-      rate: '₱0.00 / hr (Volunteer)',
-      isVolunteer: true,
+      rate: '₱300.00 / hr',
+      hourlyRate: 300,
+      paymentMethods: ['GCash', 'UnionBank'],
+      gcashNumber: '0919-888-4321',
+      gcashName: 'John Reyes',
+      bankName: 'UnionBank',
+      bankAccount: '1094-7721-3456',
+      bankHolder: 'John Reyes',
       sessionType: 'online',
       availableToday: true,
       availableThisWeek: true,
@@ -110,8 +128,14 @@ export default function ExploreScreen({ onNavigateTab, onBookSession, onViewMent
       rating: 4.7,
       sessionsCount: 15,
       isVerified: true,
-      rate: '₱250 / session',
-      isVolunteer: false,
+      rate: '₱250.00 / hr',
+      hourlyRate: 250,
+      paymentMethods: ['GCash', 'Maya Bank'],
+      gcashNumber: '0995-123-9876',
+      gcashName: 'Bea Bautista',
+      bankName: 'Maya Bank',
+      bankAccount: '0995-123-9876',
+      bankHolder: 'Bea Bautista',
       sessionType: 'online',
       availableToday: false,
       availableThisWeek: true,
@@ -131,8 +155,14 @@ export default function ExploreScreen({ onNavigateTab, onBookSession, onViewMent
       rating: 4.8,
       sessionsCount: 20,
       isVerified: true,
-      rate: '₱0.00 / hr (Volunteer)',
-      isVolunteer: true,
+      rate: '₱280.00 / hr',
+      hourlyRate: 280,
+      paymentMethods: ['GCash', 'BDO Unibank'],
+      gcashNumber: '0917-333-8899',
+      gcashName: 'Paolo Mendoza',
+      bankName: 'BDO Unibank',
+      bankAccount: '5543-2211-9988',
+      bankHolder: 'Paolo Mendoza',
       sessionType: 'both',
       availableToday: false,
       availableThisWeek: true,
@@ -152,8 +182,14 @@ export default function ExploreScreen({ onNavigateTab, onBookSession, onViewMent
       rating: 4.9,
       sessionsCount: 22,
       isVerified: true,
-      rate: '₱0.00 / hr (Volunteer)',
-      isVolunteer: true,
+      rate: '₱220.00 / hr',
+      hourlyRate: 220,
+      paymentMethods: ['GCash', 'BPI'],
+      gcashNumber: '0922-777-6543',
+      gcashName: 'Carlos Lim',
+      bankName: 'BPI',
+      bankAccount: '8876-5432-1100',
+      bankHolder: 'Carlos Lim',
       sessionType: 'online',
       availableToday: true,
       availableThisWeek: true,
@@ -383,9 +419,12 @@ export default function ExploreScreen({ onNavigateTab, onBookSession, onViewMent
                     </div>
                   </div>
 
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200">
-                    {mentor.isVolunteer ? 'Volunteer' : mentor.rate}
-                  </span>
+                  <div className="text-right">
+                    <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-sky-50 text-sky-700 border border-sky-200 block">
+                      {mentor.rate}
+                    </span>
+                    <span className="text-[9px] text-slate-400 font-semibold mt-0.5 block">50% Down Payment</span>
+                  </div>
                 </div>
 
                 {/* Rating & Sessions Strip */}
@@ -525,13 +564,12 @@ export default function ExploreScreen({ onNavigateTab, onBookSession, onViewMent
                     <span className="text-slate-500 font-medium">{mentor.sessionsCount} Sessions</span>
                   </div>
 
-                  <span className="text-[11px] font-semibold text-slate-700">
-                    {mentor.isVolunteer ? (
-                      <span className="text-sky-600 font-bold">Volunteer (₱0)</span>
-                    ) : (
-                      mentor.rate
-                    )}
-                  </span>
+                  <div className="text-right">
+                    <span className="text-[11px] font-extrabold text-sky-700">
+                      {mentor.rate}
+                    </span>
+                    <span className="text-[9px] text-slate-400 block">GCash / Bank</span>
+                  </div>
                 </div>
 
                 {/* Skills tags */}
@@ -816,10 +854,11 @@ export default function ExploreScreen({ onNavigateTab, onBookSession, onViewMent
                 <p className="text-xs font-bold text-slate-900 mt-0.5">{previewMentor.sessionsCount}</p>
               </div>
               <div>
-                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Fee</p>
+                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Rate</p>
                 <p className="text-xs font-bold text-sky-600 mt-0.5">
-                  {previewMentor.isVolunteer ? 'Free' : previewMentor.rate.split(' ')[0]}
+                  {previewMentor.rate.split(' ')[0]}
                 </p>
+                <p className="text-[9px] text-slate-400">50% deposit</p>
               </div>
             </div>
 

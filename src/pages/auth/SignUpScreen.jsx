@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import logoImg from '../../assets/logo.png';
 
 export default function SignUpScreen({
@@ -15,6 +15,15 @@ export default function SignUpScreen({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    // Hardware-accelerated frame trigger for smooth drawer slide-up
+    const timer = setTimeout(() => {
+      setIsDrawerOpen(true);
+    }, 40);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -60,48 +69,57 @@ export default function SignUpScreen({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#064e6f] via-[#0284c7] to-[#057199] flex flex-col justify-between font-sans">
+    <div className="min-h-screen bg-gradient-to-b from-sky-50 via-white to-slate-50 flex flex-col justify-between font-sans relative overflow-hidden">
+      {/* Decorative soft ambient light circles for subtle depth */}
+      <div className="absolute -right-16 -top-16 w-56 h-56 bg-sky-100/60 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -left-16 top-48 w-56 h-56 bg-cyan-100/40 rounded-full blur-3xl pointer-events-none" />
       
       {/* Top Header & Branding Section */}
-      <div className="pt-8 pb-6 px-6 text-center flex flex-col items-center">
-        {/* App Logo */}
-        <div className="w-20 h-20 mb-2.5 flex items-center justify-center drop-shadow-md">
+      <div className="pt-8 pb-5 px-6 text-center flex flex-col items-center">
+        {/* App Logo - High contrast on light background */}
+        <div className="w-24 h-24 mb-2 flex items-center justify-center">
           <img
             src={logoImg}
             alt="MentorLink Logo"
-            className="w-full h-full object-contain"
+            className="w-full h-full object-contain drop-shadow-sm"
           />
         </div>
 
         {/* Heading & Subtitle */}
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
           Create Account
         </h1>
-        <p className="text-xs sm:text-sm text-sky-100/90 mt-1 max-w-xs font-normal">
+        <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-xs font-medium">
           Join MentorLink to connect, learn, and grow.
         </p>
       </div>
 
-      {/* White Curved Bottom Sheet Container */}
-      <div className="bg-white rounded-t-[44px] px-6 sm:px-8 pt-7 pb-10 shadow-2xl flex-1 flex flex-col justify-start">
+      {/* White Curved Bottom Sheet Container acting like a native mobile drawer */}
+      <div
+        className={`bg-white rounded-t-[40px] px-6 sm:px-8 pt-5 pb-8 shadow-[0_-12px_32px_-4px_rgba(15,23,42,0.08)] border-t border-slate-100 flex-1 flex flex-col justify-start transform transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${
+          isDrawerOpen ? 'translate-y-0' : 'translate-y-full'
+        }`}
+      >
+        {/* Mobile Drawer Pill Handle */}
+        <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-4"></div>
         
-        <h2 className="text-3xl font-extrabold text-slate-900 text-center mb-5 tracking-tight">
+        <h2 className="text-2xl font-extrabold text-slate-900 text-center mb-5 tracking-tight">
           Sign Up
         </h2>
 
         {/* Role Selector Tabs */}
-        <div className="mb-5">
-          <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2 text-center">
+        <div className="mb-4">
+          <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2 text-center">
             Choose your account role:
           </label>
-          <div className="grid grid-cols-2 gap-2 bg-slate-100 p-1.5 rounded-2xl">
+          <div className="grid grid-cols-2 gap-2 bg-slate-100/80 p-1.5 rounded-2xl border border-slate-200/60">
             <button
               type="button"
               onClick={() => setRole('student')}
               className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                 role === 'student'
-                  ? 'bg-white text-[#057199] shadow-sm'
-                  : 'text-slate-500 hover:text-slate-800'
+                  ? 'bg-white text-sky-600 shadow-sm border border-slate-200/50'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -116,8 +134,8 @@ export default function SignUpScreen({
               onClick={() => setRole('mentor')}
               className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
                 role === 'mentor'
-                  ? 'bg-white text-[#057199] shadow-sm'
-                  : 'text-slate-500 hover:text-slate-800'
+                  ? 'bg-white text-sky-600 shadow-sm border border-slate-200/50'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -142,10 +160,10 @@ export default function SignUpScreen({
           
           {/* Full Name Field */}
           <div>
-            <label className="block text-sm font-bold text-slate-900 mb-1 text-left">
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1 text-left">
               Full Name
             </label>
-            <div className="bg-slate-200/80 rounded-2xl flex items-center px-4 py-3 focus-within:ring-2 focus-within:ring-[#057199] transition-all">
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl flex items-center px-4 py-3 focus-within:bg-white focus-within:border-sky-600 focus-within:ring-4 focus-within:ring-sky-100 transition-all">
               <svg className="w-5 h-5 text-slate-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
@@ -161,10 +179,10 @@ export default function SignUpScreen({
 
           {/* Email Field */}
           <div>
-            <label className="block text-sm font-bold text-slate-900 mb-1 text-left">
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1 text-left">
               Email
             </label>
-            <div className="bg-slate-200/80 rounded-2xl flex items-center px-4 py-3 focus-within:ring-2 focus-within:ring-[#057199] transition-all">
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl flex items-center px-4 py-3 focus-within:bg-white focus-within:border-sky-600 focus-within:ring-4 focus-within:ring-sky-100 transition-all">
               <svg className="w-5 h-5 text-slate-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
@@ -180,10 +198,10 @@ export default function SignUpScreen({
 
           {/* Password Field */}
           <div>
-            <label className="block text-sm font-bold text-slate-900 mb-1 text-left">
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1 text-left">
               Password
             </label>
-            <div className="bg-slate-200/80 rounded-2xl flex items-center px-4 py-3 focus-within:ring-2 focus-within:ring-[#057199] transition-all">
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl flex items-center px-4 py-3 focus-within:bg-white focus-within:border-sky-600 focus-within:ring-4 focus-within:ring-sky-100 transition-all">
               <svg className="w-5 h-5 text-slate-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
@@ -197,7 +215,7 @@ export default function SignUpScreen({
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="text-slate-400 hover:text-slate-700 ml-2 focus:outline-none"
+                className="text-slate-400 hover:text-slate-600 ml-2 focus:outline-none"
                 aria-label="Toggle password visibility"
               >
                 {showPassword ? (
@@ -216,10 +234,10 @@ export default function SignUpScreen({
 
           {/* Confirm Password Field */}
           <div>
-            <label className="block text-sm font-bold text-slate-900 mb-1 text-left">
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1 text-left">
               Confirm Password
             </label>
-            <div className="bg-slate-200/80 rounded-2xl flex items-center px-4 py-3 focus-within:ring-2 focus-within:ring-[#057199] transition-all">
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl flex items-center px-4 py-3 focus-within:bg-white focus-within:border-sky-600 focus-within:ring-4 focus-within:ring-sky-100 transition-all">
               <svg className="w-5 h-5 text-slate-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
@@ -233,7 +251,7 @@ export default function SignUpScreen({
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="text-slate-400 hover:text-slate-700 ml-2 focus:outline-none"
+                className="text-slate-400 hover:text-slate-600 ml-2 focus:outline-none"
                 aria-label="Toggle password visibility"
               >
                 {showConfirmPassword ? (
@@ -257,10 +275,10 @@ export default function SignUpScreen({
                 type="checkbox"
                 checked={agreeTerms}
                 onChange={(e) => setAgreeTerms(e.target.checked)}
-                className="w-4 h-4 mt-0.5 rounded border-slate-300 text-[#057199] focus:ring-[#057199]"
+                className="w-4 h-4 mt-0.5 rounded border-slate-300 text-sky-600 focus:ring-sky-600"
               />
-              <span className="text-xs font-medium text-slate-800 leading-tight">
-                I agree to the <span className="text-[#057199] underline">Terms of Service</span> and <span className="text-[#057199] underline">Privacy Policy</span>.
+              <span className="text-xs font-medium text-slate-600 leading-tight">
+                I agree to the <span className="text-sky-600 underline">Terms of Service</span> and <span className="text-sky-600 underline">Privacy Policy</span>.
               </span>
             </label>
           </div>
@@ -269,7 +287,7 @@ export default function SignUpScreen({
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-4 rounded-2xl bg-[#057199] hover:bg-[#03597d] active:scale-[0.98] text-white font-extrabold text-base shadow-lg shadow-sky-900/20 transition-all flex items-center justify-center gap-2 mt-5 cursor-pointer"
+            className="w-full py-4 rounded-2xl bg-sky-600 hover:bg-sky-700 active:scale-[0.98] text-white font-extrabold text-base shadow-lg shadow-sky-600/25 transition-all flex items-center justify-center gap-2 mt-5 cursor-pointer"
           >
             {isLoading ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -282,9 +300,9 @@ export default function SignUpScreen({
 
         {/* Divider: Line - Or - Line */}
         <div className="flex items-center my-5">
-          <div className="flex-1 border-t border-slate-900"></div>
-          <span className="px-4 text-sm font-bold text-slate-900">Or</span>
-          <div className="flex-1 border-t border-slate-900"></div>
+          <div className="flex-1 border-t border-slate-200"></div>
+          <span className="px-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Or</span>
+          <div className="flex-1 border-t border-slate-200"></div>
         </div>
 
         {/* Google Authentication Pill */}
@@ -294,7 +312,7 @@ export default function SignUpScreen({
             onClick={() => {
               if (onSignUp) onSignUp({ fullName: 'Google User', email: 'new.google.user@university.edu', role });
             }}
-            className="w-full sm:w-64 py-3 px-6 rounded-full bg-slate-100 hover:bg-slate-200/90 border border-slate-200 flex items-center justify-center gap-3 transition-colors shadow-sm active:scale-95 cursor-pointer"
+            className="w-full sm:w-64 py-3 px-6 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 flex items-center justify-center gap-3 transition-colors shadow-sm active:scale-95 cursor-pointer"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -314,17 +332,17 @@ export default function SignUpScreen({
                 d="M12 4.77c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.7 1.27 6.59l4.01 3.13c.95-2.84 3.6-4.95 6.72-4.95z"
               />
             </svg>
-            <span className="font-bold text-slate-900 text-sm">Google</span>
+            <span className="font-bold text-slate-800 text-sm">Google</span>
           </button>
         </div>
 
         {/* Bottom Switcher: Already have an account? Sign In */}
-        <p className="text-center text-xs sm:text-sm text-slate-800 mt-6">
+        <p className="text-center text-xs sm:text-sm text-slate-500 mt-6">
           Already have an account?{' '}
           <button
             type="button"
             onClick={onNavigateToLogin}
-            className="font-bold italic text-[#057199] hover:underline focus:outline-none"
+            className="font-bold text-sky-600 hover:text-sky-700 hover:underline focus:outline-none"
           >
             Sign In
           </button>

@@ -33,7 +33,13 @@ export default function SessionsScreen({
         sessionsCount: 38,
         isVerified: true,
         rate: '₱250.00 / hr',
-        isVolunteer: false,
+        hourlyRate: 250,
+        totalFee: 250,
+        downPayment: 125,
+        remainingBalance: 125,
+        paymentStatus: 'downpayment_verified',
+        paymentChannel: 'GCash',
+        referenceNumber: '9021841029381',
         avatarBg: 'bg-emerald-600',
         initials: 'MC'
       },
@@ -54,8 +60,14 @@ export default function SessionsScreen({
         rating: 4.9,
         sessionsCount: 24,
         isVerified: true,
-        rate: '₱0.00 / hr (Volunteer)',
-        isVolunteer: true,
+        rate: '₱250.00 / hr',
+        hourlyRate: 250,
+        totalFee: 250,
+        downPayment: 125,
+        remainingBalance: 125,
+        paymentStatus: 'downpayment_submitted',
+        paymentChannel: 'GCash',
+        referenceNumber: '1092837465012',
         avatarBg: 'bg-sky-600',
         initials: 'AS'
       },
@@ -76,8 +88,14 @@ export default function SessionsScreen({
         rating: 5.0,
         sessionsCount: 45,
         isVerified: true,
-        rate: '₱0.00 / hr (Volunteer)',
-        isVolunteer: true,
+        rate: '₱200.00 / hr',
+        hourlyRate: 200,
+        totalFee: 200,
+        downPayment: 100,
+        remainingBalance: 0,
+        paymentStatus: 'fully_paid',
+        paymentChannel: 'BPI Bank',
+        referenceNumber: '8839201948572',
         avatarBg: 'bg-purple-600',
         initials: 'CR'
       },
@@ -415,8 +433,8 @@ export default function SessionsScreen({
                         </div>
                       </div>
 
-                      <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 shrink-0">
-                        {mentor.isVolunteer ? 'Volunteer (₱0)' : mentor.rate}
+                      <span className="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-200 shrink-0">
+                        {mentor.rate || '₱250.00 / hr'}
                       </span>
                     </div>
 
@@ -608,7 +626,7 @@ export default function SessionsScreen({
                     </div>
 
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
-                      {mentor.isVolunteer ? 'Volunteer (₱0)' : mentor.rate}
+                      {mentor.rate || '₱200.00 / hr'}
                     </span>
                   </div>
 

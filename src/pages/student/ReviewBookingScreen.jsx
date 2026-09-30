@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 
 export default function ReviewBookingScreen({ bookingData, onBack, onComplete }) {
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [paymentChannel, setPaymentChannel] = useState('gcash'); // 'gcash' | 'bank'
+  const [referenceNumber, setReferenceNumber] = useState('');
+  const [paymentError, setPaymentError] = useState('');
+  const [copiedField, setCopiedField] = useState(null);
 
   // Fallback defaults if opened directly
   const data = bookingData || {
@@ -12,8 +16,14 @@ export default function ReviewBookingScreen({ bookingData, onBack, onComplete })
       rating: 4.9,
       sessionsCount: 24,
       isVerified: true,
-      rate: '₱0.00 / hr (Volunteer)',
-      isVolunteer: true,
+      rate: '₱250.00 / hr',
+      hourlyRate: 250,
+      paymentMethods: ['GCash', 'BDO Unibank'],
+      gcashNumber: '0917-555-0192',
+      gcashName: 'Alex Santos',
+      bankName: 'BDO Unibank',
+      bankAccount: '1092-8834-5512',
+      bankHolder: 'Alex Santos',
       avatarBg: 'bg-sky-600',
       initials: 'AS'
     },
@@ -25,6 +35,10 @@ export default function ReviewBookingScreen({ bookingData, onBack, onComplete })
   };
 
   const mentor = data.mentor;
+  const hourlyRate = mentor.hourlyRate || parseInt(String(mentor.rate).replace(/[^0-9]/g, '')) || 250;
+  const totalFee = data.totalFee || hourlyRate;
+  const downPaymentAmount = data.downPayment || Math.round(totalFee * 0.5);
+  const remainingBalance = totalFee - downPaymentAmount;
 
   // Format readable date
   const getReadableDate = (iso) => {
@@ -39,7 +53,22 @@ export default function ReviewBookingScreen({ bookingData, onBack, onComplete })
 
   const readableDate = getReadableDate(data.date);
 
+  const handleCopy = (text, fieldName) => {
+    navigator.clipboard?.writeText(text);
+    setCopiedField(fieldName);
+    setTimeout(() => setCopiedField(null), 2000);
+  };
+
   const handleConfirmAndSend = () => {
+    if (!referenceNumber.trim()) {
+      setPaymentError('Please enter your transaction reference number to submit your down payment.');
+      return;
+    }
+    if (referenceNumber.trim().length < 6) {
+      setPaymentError('Please enter a valid reference number (at least 6 characters).');
+      return;
+    }
+    setPaymentError('');
     setIsSuccessModalOpen(true);
   };
 
@@ -57,18 +86,18 @@ export default function ReviewBookingScreen({ bookingData, onBack, onComplete })
           <span>Back to Configuration</span>
         </button>
 
-        <span className="text-[10px] font-bold uppercase tracking-wider text-sky-600 bg-sky-50 border border-sky-200 px-2 py-0.5 rounded-full">
-          Step 2 of 2: Review
+        <span className="text-[10px] font-bold uppercase tracking-wider text-sky-600 bg-sky-50 border border-sky-200 px-2.5 py-0.5 rounded-full">
+          Step 2 of 2: Checkout & Review
         </span>
       </div>
 
       {/* Screen Title */}
       <div>
         <h1 className="text-xl font-bold tracking-tight text-slate-900">
-          Review Booking
+          Review & Down Payment
         </h1>
         <p className="text-xs text-slate-500 font-medium mt-0.5">
-          Please confirm all session parameters before sending your request to the mentor.
+          Submit your 50% down payment to confirm your booking and eliminate fake requests.
         </p>
       </div>
 
@@ -103,15 +132,18 @@ export default function ReviewBookingScreen({ bookingData, onBack, onComplete })
           </div>
         </div>
 
-        <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-          {mentor.isVolunteer ? 'Volunteer (₱0)' : mentor.rate}
-        </span>
+        <div className="text-right">
+          <span className="text-xs font-black text-sky-700 block">
+            {mentor.rate || `₱${hourlyRate}.00 / hr`}
+          </span>
+          <span className="text-[10px] text-emerald-600 font-bold block mt-0.5">Paid Mentor</span>
+        </div>
       </div>
 
       {/* 3. Session Details Comprehensive Summary */}
       <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs space-y-3.5">
         <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-          Session Details
+          Session Parameters
         </h3>
 
         <div className="space-y-3 text-xs divide-y divide-slate-100">
@@ -132,7 +164,7 @@ export default function ReviewBookingScreen({ bookingData, onBack, onComplete })
               <svg className="w-4 h-4 text-sky-600 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
               </svg>
-              <span>Time</span>
+              <span>Time Slot</span>
             </div>
             <span className="font-bold text-slate-800">{data.time}</span>
           </div>
@@ -160,29 +192,201 @@ export default function ReviewBookingScreen({ bookingData, onBack, onComplete })
               {data.format === 'Online' ? 'Online (Virtual Classroom)' : data.format}
             </span>
           </div>
+        </div>
+      </div>
 
-          {/* Mentoring Fee */}
-          <div className="flex items-center justify-between pt-3">
-            <div className="flex items-center gap-2 text-slate-500 font-medium">
-              <svg className="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-              </svg>
-              <span>Mentoring Fee</span>
+      {/* 4. Payment Breakdown Card */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+            Payment Breakdown
+          </h3>
+          <span className="text-[10px] font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-full border border-sky-200">
+            50% Anti-Scam Down Payment
+          </span>
+        </div>
+
+        <div className="space-y-2.5 text-xs">
+          <div className="flex items-center justify-between text-slate-600">
+            <span>Total Session Fee (1 hour):</span>
+            <span className="font-semibold text-slate-900">₱{totalFee}.00</span>
+          </div>
+
+          <div className="flex items-center justify-between p-3 rounded-xl bg-sky-50 border border-sky-200 text-sky-950 font-bold">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-sky-600 animate-pulse" />
+              <span>50% Required Down Payment (Due Now):</span>
             </div>
-            <span className="font-black text-emerald-600">
-              {mentor.isVolunteer ? '₱0.00 · Volunteer (Service Hours)' : mentor.rate}
-            </span>
+            <span className="text-sm font-extrabold text-sky-700">₱{downPaymentAmount}.00</span>
+          </div>
+
+          <div className="flex items-center justify-between text-slate-500 pt-1">
+            <span>Remaining 50% Balance (Due After Session):</span>
+            <span className="font-semibold text-slate-700">₱{remainingBalance}.00</span>
           </div>
         </div>
       </div>
 
-      {/* 4. Session Topic Card */}
+      {/* 5. Direct Payment Channel Selector & Account Details */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs space-y-3.5">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+          Transfer Down Payment
+        </h3>
+
+        {/* Channel Switcher Tabs */}
+        <div className="grid grid-cols-2 gap-2 bg-slate-100 p-1.5 rounded-2xl border border-slate-200/60">
+          <button
+            type="button"
+            onClick={() => setPaymentChannel('gcash')}
+            className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+              paymentChannel === 'gcash'
+                ? 'bg-sky-600 text-white shadow-sm'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <span className="font-extrabold">GCash</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setPaymentChannel('bank')}
+            className={`py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+              paymentChannel === 'bank'
+                ? 'bg-sky-600 text-white shadow-sm'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <span>Bank Account</span>
+          </button>
+        </div>
+
+        {/* GCash Account Card */}
+        {paymentChannel === 'gcash' && (
+          <div className="bg-slate-50 rounded-2xl p-3.5 border border-slate-200 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                Mentor's GCash Account
+              </span>
+              <span className="text-[10px] font-bold text-sky-600 bg-white px-2 py-0.5 rounded-md border border-slate-200">
+                Verified
+              </span>
+            </div>
+
+            <div className="space-y-1.5 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-500">Account Name:</span>
+                <span className="font-bold text-slate-900">{mentor.gcashName || mentor.name}</span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-slate-500">GCash Mobile:</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono font-bold text-slate-900 text-sm">
+                    {mentor.gcashNumber || '0917-555-0192'}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleCopy(mentor.gcashNumber || '0917-555-0192', 'gcash')}
+                    className="p-1 px-2 rounded-lg bg-white border border-slate-200 text-[10px] font-bold text-sky-600 hover:bg-sky-50 active:scale-95 cursor-pointer"
+                  >
+                    {copiedField === 'gcash' ? 'Copied!' : 'Copy'}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-[11px] text-slate-500 leading-relaxed pt-1 border-t border-slate-200/60">
+              1. Open GCash app & send <span className="font-bold text-slate-800">₱{downPaymentAmount}.00</span>.<br />
+              2. Copy the 13-digit reference number and paste below.
+            </p>
+          </div>
+        )}
+
+        {/* Bank Account Card */}
+        {paymentChannel === 'bank' && (
+          <div className="bg-slate-50 rounded-2xl p-3.5 border border-slate-200 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                Mentor's Bank Account
+              </span>
+              <span className="text-[10px] font-bold text-emerald-700 bg-white px-2 py-0.5 rounded-md border border-slate-200">
+                InstaPay / PESONet
+              </span>
+            </div>
+
+            <div className="space-y-1.5 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-500">Bank Name:</span>
+                <span className="font-bold text-slate-900">{mentor.bankName || 'BDO Unibank'}</span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-slate-500">Account Name:</span>
+                <span className="font-bold text-slate-900">{mentor.bankHolder || mentor.name}</span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-slate-500">Account Number:</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono font-bold text-slate-900 text-sm">
+                    {mentor.bankAccount || '1092-8834-5512'}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleCopy(mentor.bankAccount || '1092-8834-5512', 'bank')}
+                    className="p-1 px-2 rounded-lg bg-white border border-slate-200 text-[10px] font-bold text-sky-600 hover:bg-sky-50 active:scale-95 cursor-pointer"
+                  >
+                    {copiedField === 'bank' ? 'Copied!' : 'Copy'}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <p className="text-[11px] text-slate-500 leading-relaxed pt-1 border-t border-slate-200/60">
+              1. Transfer <span className="font-bold text-slate-800">₱{downPaymentAmount}.00</span> via online banking.<br />
+              2. Enter the transaction reference / trace number below.
+            </p>
+          </div>
+        )}
+
+        {/* Transaction Reference Number Input */}
+        <div>
+          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+            Transaction Reference Number <span className="text-rose-500">*</span>
+          </label>
+          <div className="bg-slate-50 border border-slate-200 rounded-2xl flex items-center px-4 py-3 focus-within:bg-white focus-within:border-sky-600 focus-within:ring-2 focus-within:ring-sky-100 transition-all">
+            <svg className="w-5 h-5 text-slate-400 mr-2.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <input
+              type="text"
+              value={referenceNumber}
+              onChange={(e) => {
+                setReferenceNumber(e.target.value);
+                if (paymentError) setPaymentError('');
+              }}
+              placeholder="e.g. 1092837465012"
+              className="w-full bg-transparent text-slate-900 placeholder-slate-400 focus:outline-none text-xs font-mono font-bold tracking-wider"
+            />
+          </div>
+          {paymentError && (
+            <p className="text-[11px] text-rose-600 font-semibold mt-1.5 flex items-center gap-1">
+              <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>{paymentError}</span>
+            </p>
+          )}
+        </div>
+      </div>
+
+      {/* 6. Session Topic Card */}
       <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-xs space-y-2">
         <div className="flex items-center justify-between">
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-            What you'd like to learn
+            Learning Focus / Goal
           </h3>
-          <span className="text-[10px] font-semibold text-sky-600">Learning Goal</span>
+          <span className="text-[10px] font-semibold text-sky-600">Goal</span>
         </div>
 
         <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 leading-relaxed font-medium">
@@ -190,29 +394,16 @@ export default function ReviewBookingScreen({ bookingData, onBack, onComplete })
         </div>
       </div>
 
-      {/* 5. Booking Request Note Banner */}
-      <div className="bg-sky-50 rounded-2xl p-4 border border-sky-100 flex items-start gap-3">
-        <svg className="w-5 h-5 text-sky-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
-        </svg>
-        <div className="space-y-1 text-xs text-sky-900 leading-relaxed">
-          <p className="font-bold">Booking Request Notice</p>
-          <p className="text-sky-800 font-normal">
-            This will be sent as a session request to {mentor.name}. Your session will only be confirmed after the mentor accepts your request.
-          </p>
-        </div>
-      </div>
-
-      {/* 6. Action Buttons */}
+      {/* 7. Action Buttons */}
       <div className="space-y-2 pt-1">
         <button
           onClick={handleConfirmAndSend}
-          className="touch-target w-full bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold py-3.5 px-4 rounded-2xl shadow-md transition-all active:scale-[0.99] flex items-center justify-center gap-1.5"
+          className="touch-target w-full bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold py-3.5 px-4 rounded-2xl shadow-md transition-all active:scale-[0.99] flex items-center justify-center gap-1.5 cursor-pointer"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
           </svg>
-          <span>Confirm & Send Request</span>
+          <span>Submit ₱{downPaymentAmount}.00 Down Payment & Book</span>
         </button>
 
         <button
@@ -224,7 +415,7 @@ export default function ReviewBookingScreen({ bookingData, onBack, onComplete })
         </button>
       </div>
 
-      {/* 7. Request Sent Success Confirmation Modal */}
+      {/* 8. Request Sent Success Confirmation Modal */}
       {isSuccessModalOpen && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
           <div className="bg-white rounded-3xl p-6 max-w-sm w-full space-y-4 shadow-2xl border border-slate-100 text-center animate-scale-up">
@@ -237,22 +428,22 @@ export default function ReviewBookingScreen({ bookingData, onBack, onComplete })
 
             {/* Modal Heading & Text */}
             <div className="space-y-1.5">
-              <h3 className="text-lg font-bold text-slate-900">Request Sent!</h3>
+              <h3 className="text-lg font-bold text-slate-900">Down Payment Sent!</h3>
               <p className="text-xs text-slate-500 leading-relaxed max-w-xs mx-auto">
-                Your session request has been sent to{' '}
-                <span className="font-bold text-slate-800">{mentor.name}</span>. You'll be notified once the mentor responds.
+                Your 50% down payment of <span className="font-bold text-slate-900">₱{downPaymentAmount}.00</span> (Ref: <span className="font-mono font-bold text-slate-800">{referenceNumber}</span>) has been submitted to{' '}
+                <span className="font-bold text-slate-800">{mentor.name}</span> for verification.
               </p>
             </div>
 
             {/* Status Summary Pill Box */}
-            <div className="bg-amber-50 rounded-xl p-3 border border-amber-200/80 text-left text-xs space-y-1">
-              <div className="flex items-center justify-between font-bold text-amber-900">
-                <span>Session Status</span>
+            <div className="bg-sky-50 rounded-xl p-3 border border-sky-200/80 text-left text-xs space-y-1">
+              <div className="flex items-center justify-between font-bold text-sky-950">
+                <span>Verification Status</span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] bg-amber-100 text-amber-800 font-bold border border-amber-300">
-                  PENDING
+                  DOWN PAYMENT VERIFYING
                 </span>
               </div>
-              <p className="text-[11px] text-amber-800 font-medium">
+              <p className="text-[11px] text-sky-800 font-medium">
                 {readableDate} · {data.time}
               </p>
             </div>
@@ -262,9 +453,19 @@ export default function ReviewBookingScreen({ bookingData, onBack, onComplete })
               <button
                 onClick={() => {
                   setIsSuccessModalOpen(false);
-                  if (onComplete) onComplete(data);
+                  if (onComplete) {
+                    onComplete({
+                      ...data,
+                      totalFee,
+                      downPayment: downPaymentAmount,
+                      remainingBalance,
+                      paymentChannel,
+                      referenceNumber,
+                      paymentStatus: 'downpayment_submitted'
+                    });
+                  }
                 }}
-                className="touch-target w-full bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold py-3 rounded-2xl shadow-md transition-all active:scale-[0.99] flex items-center justify-center gap-1.5"
+                className="touch-target w-full bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold py-3 rounded-2xl shadow-md transition-all active:scale-[0.99] flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <span>View My Sessions</span>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">

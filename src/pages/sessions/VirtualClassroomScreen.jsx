@@ -589,7 +589,7 @@ export default function VirtualClassroomScreen({
                 </svg>
                 <span>
                   {isMentor
-                    ? 'End Session & Accredit Service Hours'
+                    ? 'End Session & Settle Payment'
                     : 'End & View Session Summary'}
                 </span>
               </button>

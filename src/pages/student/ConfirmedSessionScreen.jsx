@@ -54,7 +54,6 @@ export default function ConfirmedSessionScreen({
       sessionsCount: 38,
       isVerified: true,
       rate: '₱250.00 / hr',
-      isVolunteer: false,
       avatarBg: 'bg-emerald-600',
       initials: 'MC'
     },
@@ -194,7 +193,7 @@ export default function ConfirmedSessionScreen({
             Assigned Mentor
           </h3>
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-            {mentor.isVolunteer ? 'Volunteer (₱0)' : mentor.rate}
+            {mentor.rate || '₱250.00 / hr'}
           </span>
         </div>
 

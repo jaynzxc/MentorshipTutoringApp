@@ -34,6 +34,12 @@ export default function MentorSessionDetailsScreen({
     time: '7:00 PM – 8:00 PM',
     duration: '60 minutes',
     format: 'Online Room',
+    totalFee: 250,
+    downPayment: 125,
+    remainingBalance: 125,
+    paymentMethod: 'GCash',
+    referenceNumber: 'MP-8921-7734',
+    paymentStatus: 'downpayment_verified',
     studentNote: "I'd like to understand JavaScript functions, especially parameters and return values.",
     countdown: 'Starts in 2 days'
   };
@@ -85,9 +91,9 @@ export default function MentorSessionDetailsScreen({
           </svg>
         </div>
         <div>
-          <h3 className="text-xs font-bold text-emerald-950">Session Confirmed</h3>
+          <h3 className="text-xs font-bold text-emerald-950">Session Confirmed & Down Payment Verified</h3>
           <p className="text-xs text-emerald-800 font-medium mt-0.5 leading-relaxed">
-            This mentoring session has been confirmed. Both you and {student.name} can access the virtual classroom 10 minutes prior to scheduled start.
+            This mentoring session has been confirmed and the 50% down payment (₱{(activeSession.downPayment || 125).toFixed(2)}) verified. Both you and {student.name} can access the virtual classroom 10 minutes prior to scheduled start.
           </p>
         </div>
       </div>
@@ -156,8 +162,24 @@ export default function MentorSessionDetailsScreen({
               </span>
             </div>
             <div className="space-y-1">
-              <span className="text-slate-500 font-medium block">Session Rate</span>
-              <p className="text-slate-900 font-bold">₱0.00 (University Volunteer)</p>
+              <span className="text-slate-500 font-medium block">Total Session Fee</span>
+              <p className="text-slate-900 font-bold">₱{(activeSession.totalFee || 250).toFixed(2)}</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 pt-3">
+            <div className="space-y-1">
+              <span className="text-slate-500 font-medium block">50% Down Payment</span>
+              <span className="inline-flex items-center gap-1 font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">
+                <svg className="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                </svg>
+                <span>₱{(activeSession.downPayment || 125).toFixed(2)} Verified</span>
+              </span>
+            </div>
+            <div className="space-y-1">
+              <span className="text-slate-500 font-medium block">Remaining Due</span>
+              <p className="text-amber-800 font-bold">₱{(activeSession.remainingBalance || 125).toFixed(2)} (Upon completion)</p>
             </div>
           </div>
 

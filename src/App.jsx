@@ -27,6 +27,7 @@ import MentorProfileSettingsScreen from './pages/mentor/MentorProfileScreen.jsx'
 import AvailabilityScreen from './pages/mentor/AvailabilityScreen.jsx';
 import LoginScreen from './pages/auth/LoginScreen.jsx';
 import SignUpScreen from './pages/auth/SignUpScreen.jsx';
+import SplashScreen from './pages/auth/SplashScreen.jsx';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
@@ -47,7 +48,8 @@ export default function App() {
   const [viewingMentorNotifications, setViewingMentorNotifications] = useState(false);
   const [viewingMentorNotificationSettings, setViewingMentorNotificationSettings] = useState(false);
   const [viewingMentorAvailability, setViewingMentorAvailability] = useState(false);
-  const [authView, setAuthView] = useState(null); // 'login' | 'signup' | null
+  const [authView, setAuthView] = useState('login'); // 'login' | 'signup' | null
+  const [showSplash, setShowSplash] = useState(true);
 
   // Student sessions state (Pending, Confirmed, Completed)
   const [studentSessions, setStudentSessions] = useState([
@@ -61,8 +63,7 @@ export default function App() {
         rating: 4.9,
         sessionsCount: 24,
         isVerified: true,
-        rate: '₱0.00 / hr (Volunteer)',
-        isVolunteer: true,
+        rate: '₱250.00 / hr',
         avatarBg: 'bg-sky-600',
         initials: 'AS'
       },
@@ -70,6 +71,12 @@ export default function App() {
       time: '7:00 PM – 8:00 PM',
       duration: '60 min',
       format: 'Online',
+      totalFee: 250,
+      downPayment: 125,
+      remainingBalance: 125,
+      paymentMethod: 'GCash',
+      referenceNumber: 'MP-8921-7734',
+      paymentStatus: 'downpayment_submitted',
       topic: 'JavaScript Functions, parameters, and return values',
       submittedAt: 'Today at 7:30 PM'
     },
@@ -84,7 +91,6 @@ export default function App() {
         sessionsCount: 38,
         isVerified: true,
         rate: '₱250.00 / hr',
-        isVolunteer: false,
         avatarBg: 'bg-emerald-600',
         initials: 'MC'
       },
@@ -92,6 +98,12 @@ export default function App() {
       time: '6:00 PM – 7:00 PM',
       duration: '60 min',
       format: 'Online',
+      totalFee: 250,
+      downPayment: 125,
+      remainingBalance: 125,
+      paymentMethod: 'BDO',
+      referenceNumber: 'BDO-0921-3312',
+      paymentStatus: 'downpayment_verified',
       topic: 'Binary Search Trees and Traversals',
       submittedAt: 'Sept 19 at 4:15 PM'
     },
@@ -105,8 +117,7 @@ export default function App() {
         rating: 5.0,
         sessionsCount: 45,
         isVerified: true,
-        rate: '₱0.00 / hr (Volunteer)',
-        isVolunteer: true,
+        rate: '₱200.00 / hr',
         avatarBg: 'bg-purple-600',
         initials: 'CR'
       },
@@ -114,6 +125,12 @@ export default function App() {
       time: '5:00 PM – 6:00 PM',
       duration: '60 min',
       format: 'Online',
+      totalFee: 200,
+      downPayment: 100,
+      remainingBalance: 0,
+      paymentMethod: 'Maya Bank',
+      referenceNumber: 'MB-4412-9901',
+      paymentStatus: 'fully_paid',
       topic: 'Mobile-first Wireframing and Auto Layout in Figma',
       ratingGiven: 5,
       studyNotes: 'Focus on 8pt grid systems, touch targets >= 44px, and atomic component structure.'
@@ -124,27 +141,6 @@ export default function App() {
     setStudentSessions((prev) =>
       prev.map((s) => (s.id === sessionId ? { ...s, status: 'cancelled' } : s))
     );
-  };
-
-  const toggleRole = () => {
-    setUserRole((prev) => (prev === 'student' ? 'mentor' : 'student'));
-    setActiveTab('home');
-    setActiveBookingMentor(null);
-    setViewingMentorProfile(null);
-    setPendingReviewBooking(null);
-    setViewingSessionDetails(null);
-    setViewingConfirmedSession(null);
-    setActiveClassroomSession(null);
-    setViewingCompletedSession(null);
-    setActiveChatMentor(null);
-    setViewingLearningProgress(false);
-    setViewingStudentProfile(null);
-    setActiveMentorChatStudent(null);
-    setViewingMentorSessionDetails(null);
-    setViewingMentorCompletedSession(null);
-    setViewingMentorNotifications(false);
-    setViewingMentorNotificationSettings(false);
-    setViewingMentorAvailability(false);
   };
 
   // Dual 5-tab configuration with clean vector SVGs (Strictly NO raw emojis in UI)
@@ -246,12 +242,41 @@ export default function App() {
 
   const currentTabs = userRole === 'student' ? studentTabs : mentorTabs;
 
+  if (showSplash) {
+    return (
+      <div className="fixed inset-0 w-full h-full bg-white overflow-hidden z-50 flex items-center justify-center">
+        <div className="w-full max-w-md h-full relative">
+          <SplashScreen onFinish={() => setShowSplash(false)} />
+        </div>
+      </div>
+    );
+  }
+
   if (authView === 'login') {
     return (
-      <div className="max-w-md mx-auto min-h-screen bg-slate-900 shadow-2xl relative">
+      <div className="max-w-md mx-auto min-h-screen bg-slate-50 shadow-2xl relative">
         <LoginScreen
           onLogin={(creds) => {
-            if (creds?.role) setUserRole(creds.role);
+            if (creds?.role) {
+              setUserRole(creds.role);
+              setActiveTab('home');
+              setActiveBookingMentor(null);
+              setViewingMentorProfile(null);
+              setPendingReviewBooking(null);
+              setViewingSessionDetails(null);
+              setViewingConfirmedSession(null);
+              setActiveClassroomSession(null);
+              setViewingCompletedSession(null);
+              setActiveChatMentor(null);
+              setViewingLearningProgress(false);
+              setViewingStudentProfile(null);
+              setActiveMentorChatStudent(null);
+              setViewingMentorSessionDetails(null);
+              setViewingMentorCompletedSession(null);
+              setViewingMentorNotifications(false);
+              setViewingMentorNotificationSettings(false);
+              setViewingMentorAvailability(false);
+            }
             setAuthView(null);
           }}
           onNavigateToSignUp={() => setAuthView('signup')}
@@ -263,7 +288,7 @@ export default function App() {
 
   if (authView === 'signup') {
     return (
-      <div className="max-w-md mx-auto min-h-screen bg-slate-900 shadow-2xl relative">
+      <div className="max-w-md mx-auto min-h-screen bg-slate-50 shadow-2xl relative">
         <SignUpScreen
           onSignUp={(userData) => {
             if (userData?.role) setUserRole(userData.role);
@@ -277,45 +302,8 @@ export default function App() {
 
   return (
     <div className="max-w-md mx-auto min-h-screen bg-slate-50 relative flex flex-col selection:bg-sky-500 selection:text-white">
-      {/* 1. Mobile Top Header */}
-      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 py-3 flex items-center justify-between pt-safe">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-sky-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
-            ML
-          </div>
-          <div>
-            <h1 className="text-sm font-bold text-slate-900 leading-tight">MentorLinks</h1>
-            <p className="text-[11px] font-medium text-slate-500">Connect. Learn. Grow.</p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {/* Dual-Role Switcher Pill */}
-          <button
-            onClick={toggleRole}
-            className="touch-target px-3 py-1 text-xs font-semibold rounded-full border transition-all active:scale-[0.98] border-sky-200 bg-sky-50 text-sky-700 flex items-center gap-1.5"
-            title="Toggle Role View"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-sky-600"></span>
-            <span>{userRole === 'student' ? 'Student Mode' : 'Mentor Mode'}</span>
-          </button>
-
-          {/* Quick Auth Screen Button */}
-          <button
-            onClick={() => setAuthView('login')}
-            className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-colors"
-            title="View Sign In Screen"
-            aria-label="Account Login"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.75" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
-            </svg>
-          </button>
-        </div>
-      </header>
-
-      {/* 2. Scrollable Mobile Content Canvas */}
-      <main className="flex-1 px-4 py-5 space-y-4 pb-24 overflow-y-auto">
+      {/* Scrollable Mobile Content Canvas */}
+      <main className="flex-1 px-4 pt-safe pt-3 pb-24 space-y-4 overflow-y-auto">
         {activeClassroomSession ? (
           <VirtualClassroomScreen
             session={activeClassroomSession}
@@ -712,7 +700,7 @@ export default function App() {
                 <p className="text-xs text-slate-500">
                   {userRole === 'student'
                     ? 'Peer Tutoring & Academic Mentorship'
-                    : 'Manage Mentees & Service Hours'}
+                    : 'Manage Mentees & Bookings'}
                 </p>
               </div>
 

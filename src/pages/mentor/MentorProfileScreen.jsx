@@ -19,8 +19,11 @@ export default function MentorProfileScreen({
     rating: 4.9,
     reviewCount: 18,
     sessionCount: 24,
-    serviceHours: 36.0,
-    hourlyRate: 150,
+    totalEarnings: 3750,
+    hourlyRate: 250,
+    gcashNumber: '0917 889 2341',
+    bankName: 'BDO Unibank',
+    bankAccountNumber: '1092 8821 7734',
   });
 
   const [expertiseTags, setExpertiseTags] = useState([
@@ -89,12 +92,12 @@ export default function MentorProfileScreen({
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
   const faqs = [
     {
-      q: 'How are University Community Service Hours accredited?',
-      a: 'Service hours are automatically logged and certified in real-time once a scheduled volunteer tutoring session is marked as completed by both parties. You can download official stamped certificates from your Session Details.',
+      q: 'How does the 50% Anti-Scam Down Payment protect mentors?',
+      a: 'Students are required to transfer a 50% down payment via GCash or Bank Account and submit their transaction reference number before a booking can be accepted. This prevents bogus bookings and ensures your scheduled time is protected.',
     },
     {
       q: 'How does the Direct Payment model work?',
-      a: 'Students transfer session fees directly to your preferred payment channels (GCash, Maya, or cash). They submit the transaction reference number in-app, which you can verify and confirm under the Sessions tab.',
+      a: 'Students transfer session fees directly to your preferred payment channels (GCash or Bank Account). They submit the transaction reference number in-app, which you verify and confirm before meeting.',
     },
     {
       q: 'Can I reschedule an upcoming session?',
@@ -261,11 +264,11 @@ export default function MentorProfileScreen({
             <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-left">
               <div className="flex items-center gap-1 text-emerald-600">
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                 </svg>
-                <span className="text-xs font-bold text-slate-900">{profile.serviceHours}h</span>
+                <span className="text-xs font-bold text-slate-900">₱{profile.hourlyRate}/hr</span>
               </div>
-              <p className="text-[10px] text-slate-500 mt-1 font-medium">Service Hours</p>
+              <p className="text-[10px] text-slate-500 mt-1 font-medium">Session Rate</p>
             </div>
           </div>
         </section>
@@ -1033,7 +1036,7 @@ export default function MentorProfileScreen({
                 >
                   <option value="booking">Booking / Schedule Issue</option>
                   <option value="payment">Direct Payment Verification</option>
-                  <option value="hours">Service Hours Accreditation</option>
+                  <option value="downpayment_dispute">Down Payment Reference Dispute</option>
                   <option value="classroom">Virtual Classroom Audio/Video</option>
                   <option value="other">Other Account Inquiries</option>
                 </select>
@@ -1103,9 +1106,9 @@ export default function MentorProfileScreen({
               <p className="font-semibold text-slate-800">1. Peer Mentorship Code of Conduct</p>
               <p>Mentors agree to uphold academic honesty and provide constructive learning guidance rather than completing coursework or examinations on behalf of learners.</p>
               <p className="font-semibold text-slate-800">2. Direct Payment Integrity</p>
-              <p>MentorLinks does not hold funds. All payments take place between students and mentors via trusted Philippine payment channels (GCash, Maya, or cash). Reference numbers are logged for verification.</p>
-              <p className="font-semibold text-slate-800">3. Service Hours Certification</p>
-              <p>Volunteer tutoring hours are accredited strictly upon completed sessions and verified by the university community extension coordinator.</p>
+              <p>MentorLinks does not hold funds. All payments take place directly between students and mentors via trusted Philippine payment channels (GCash, Maya, or bank account). Reference numbers are logged for verification.</p>
+              <p className="font-semibold text-slate-800">3. Anti-Scam Down Payment Policy</p>
+              <p>Students submit a 50% down payment before booking confirmation. Mentors verify receipt before accepting. Confirmed bookings safeguard both student and mentor time.</p>
             </div>
             <button
               type="button"

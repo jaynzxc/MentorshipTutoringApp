@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import logoImg from '../../assets/logo.png';
 
 export default function LoginScreen({
@@ -10,91 +10,109 @@ export default function LoginScreen({
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [selectedRole, setSelectedRole] = useState('student'); // 'student' | 'mentor'
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    // Hardware-accelerated frame trigger for smooth drawer slide-up
+    const timer = setTimeout(() => {
+      setIsDrawerOpen(true);
+    }, 40);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const STATIC_ACCOUNTS = [
+    {
+      email: 'student@mentorlink.ph',
+      password: 'student123',
+      role: 'student',
+      name: 'Daniela Gonzales'
+    },
+    {
+      email: 'mentor@mentorlink.ph',
+      password: 'mentor123',
+      role: 'mentor',
+      name: 'Alex Santos'
+    }
+  ];
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setErrorMessage('');
 
-    if (!email.trim()) {
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanPassword = password.trim();
+
+    if (!cleanEmail) {
       setErrorMessage('Please enter your email address.');
       return;
     }
-    if (!password) {
+    if (!cleanPassword) {
       setErrorMessage('Please enter your password.');
       return;
     }
 
     setIsLoading(true);
-    // Simulate quick authentication
+    // Simulate quick authentication & verify credentials
     setTimeout(() => {
       setIsLoading(false);
-      if (onLogin) {
-        onLogin({
-          email,
-          role: selectedRole
-        });
+      const matched = STATIC_ACCOUNTS.find(
+        (acc) => acc.email.toLowerCase() === cleanEmail && acc.password === cleanPassword
+      );
+
+      if (matched) {
+        if (onLogin) {
+          onLogin({
+            email: matched.email,
+            role: matched.role,
+            name: matched.name
+          });
+        }
+      } else {
+        setErrorMessage('Invalid email or password. Please use the designated student or mentor credentials.');
       }
-    }, 400);
+    }, 350);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#064e6f] via-[#0284c7] to-[#057199] flex flex-col justify-between font-sans">
+    <div className="min-h-screen bg-gradient-to-b from-sky-50 via-white to-slate-50 flex flex-col justify-between font-sans relative overflow-hidden">
+      {/* Decorative soft ambient light circles for subtle depth */}
+      <div className="absolute -right-16 -top-16 w-56 h-56 bg-sky-100/60 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -left-16 top-48 w-56 h-56 bg-cyan-100/40 rounded-full blur-3xl pointer-events-none" />
       
       {/* Top Header & Branding Section */}
-      <div className="pt-10 pb-8 px-6 text-center flex flex-col items-center">
-        {/* App Logo */}
-        <div className="w-24 h-24 mb-3 flex items-center justify-center drop-shadow-md">
+      <div className="pt-10 pb-6 px-6 text-center flex flex-col items-center">
+        {/* App Logo - High contrast on light background */}
+        <div className="w-28 h-28 mb-2 flex items-center justify-center">
           <img
             src={logoImg}
             alt="MentorLink Logo"
-            className="w-full h-full object-contain"
+            className="w-full h-full object-contain drop-shadow-sm"
           />
         </div>
 
         {/* Heading & Subtitle */}
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
           Welcome Back!
         </h1>
-        <p className="text-xs sm:text-sm text-sky-100/90 mt-1 max-w-xs font-normal">
+        <p className="text-xs sm:text-sm text-slate-500 mt-1 max-w-xs font-medium">
           Sign in to continue your journey with MentorLink.
         </p>
       </div>
 
-      {/* White Curved Bottom Sheet Container */}
-      <div className="bg-white rounded-t-[44px] px-6 sm:px-8 pt-8 pb-10 shadow-2xl flex-1 flex flex-col justify-start">
+      {/* White Curved Bottom Sheet Container acting like a native mobile drawer */}
+      <div
+        className={`bg-white rounded-t-[40px] px-6 sm:px-8 pt-5 pb-8 shadow-[0_-12px_32px_-4px_rgba(15,23,42,0.08)] border-t border-slate-100 flex-1 flex flex-col justify-start transform transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] will-change-transform ${
+          isDrawerOpen ? 'translate-y-0' : 'translate-y-full'
+        }`}
+      >
+        {/* Mobile Drawer Pill Handle */}
+        <div className="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-4"></div>
         
-        <h2 className="text-3xl font-extrabold text-slate-900 text-center mb-6 tracking-tight">
+        <h2 className="text-2xl font-extrabold text-slate-900 text-center mb-6 tracking-tight">
           Sign In
         </h2>
-
-        {/* Optional Role Quick Selector for Demo */}
-        <div className="flex bg-slate-100 p-1 rounded-2xl mb-5 max-w-xs mx-auto w-full">
-          <button
-            type="button"
-            onClick={() => setSelectedRole('student')}
-            className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              selectedRole === 'student'
-                ? 'bg-white text-[#057199] shadow-sm'
-                : 'text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            Student Mode
-          </button>
-          <button
-            type="button"
-            onClick={() => setSelectedRole('mentor')}
-            className={`flex-1 py-1.5 rounded-xl text-xs font-bold transition-all ${
-              selectedRole === 'mentor'
-                ? 'bg-white text-[#057199] shadow-sm'
-                : 'text-slate-500 hover:text-slate-800'
-            }`}
-          >
-            Mentor Mode
-          </button>
-        </div>
 
         {/* Error Alert if any */}
         {errorMessage && (
@@ -110,10 +128,10 @@ export default function LoginScreen({
           
           {/* Email Field */}
           <div>
-            <label className="block text-sm font-bold text-slate-900 mb-1.5 text-left">
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 text-left">
               Email
             </label>
-            <div className="bg-slate-200/80 rounded-2xl flex items-center px-4 py-3.5 focus-within:ring-2 focus-within:ring-[#057199] transition-all">
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl flex items-center px-4 py-3.5 focus-within:bg-white focus-within:border-sky-600 focus-within:ring-4 focus-within:ring-sky-100 transition-all">
               <svg className="w-5 h-5 text-slate-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
@@ -129,10 +147,10 @@ export default function LoginScreen({
 
           {/* Password Field */}
           <div>
-            <label className="block text-sm font-bold text-slate-900 mb-1.5 text-left">
+            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 text-left">
               Password
             </label>
-            <div className="bg-slate-200/80 rounded-2xl flex items-center px-4 py-3.5 focus-within:ring-2 focus-within:ring-[#057199] transition-all">
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl flex items-center px-4 py-3.5 focus-within:bg-white focus-within:border-sky-600 focus-within:ring-4 focus-within:ring-sky-100 transition-all">
               <svg className="w-5 h-5 text-slate-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
@@ -146,7 +164,7 @@ export default function LoginScreen({
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="text-slate-400 hover:text-slate-700 ml-2 focus:outline-none"
+                className="text-slate-400 hover:text-slate-600 ml-2 focus:outline-none"
                 aria-label="Toggle password visibility"
               >
                 {showPassword ? (
@@ -170,9 +188,9 @@ export default function LoginScreen({
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="w-4 h-4 rounded border-slate-300 text-[#057199] focus:ring-[#057199]"
+                className="w-4 h-4 rounded border-slate-300 text-sky-600 focus:ring-sky-600"
               />
-              <span className="text-xs sm:text-sm font-medium text-slate-800">
+              <span className="text-xs sm:text-sm font-medium text-slate-600">
                 Remember me
               </span>
             </label>
@@ -180,7 +198,7 @@ export default function LoginScreen({
             <button
               type="button"
               onClick={onForgotPassword}
-              className="text-xs sm:text-sm font-medium text-slate-800 hover:text-[#057199] transition-colors"
+              className="text-xs sm:text-sm font-semibold text-sky-600 hover:text-sky-700 transition-colors"
             >
               Forgot Password?
             </button>
@@ -190,7 +208,7 @@ export default function LoginScreen({
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-4 rounded-2xl bg-[#057199] hover:bg-[#03597d] active:scale-[0.98] text-white font-extrabold text-base shadow-lg shadow-sky-900/20 transition-all flex items-center justify-center gap-2 mt-6 cursor-pointer"
+            className="w-full py-4 rounded-2xl bg-sky-600 hover:bg-sky-700 active:scale-[0.98] text-white font-extrabold text-base shadow-lg shadow-sky-600/25 transition-all flex items-center justify-center gap-2 mt-5 cursor-pointer"
           >
             {isLoading ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -201,11 +219,61 @@ export default function LoginScreen({
 
         </form>
 
+        {/* Demo Accounts Reference Card for Easy Testing */}
+        <div className="mt-4 p-3.5 bg-slate-50 rounded-2xl border border-slate-200/80 text-left space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+              Demo Accounts
+            </span>
+            <span className="text-[10px] font-semibold text-sky-700 bg-sky-50 px-2 py-0.5 rounded-full border border-sky-200">
+              Tap to auto-fill
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            {/* Student Tile */}
+            <button
+              type="button"
+              onClick={() => {
+                setEmail('student@mentorlink.ph');
+                setPassword('student123');
+                setErrorMessage('');
+              }}
+              className="p-2.5 rounded-xl bg-white border border-slate-200 hover:border-sky-300 hover:bg-sky-50/50 text-left transition-all active:scale-95 group shadow-2xs"
+            >
+              <div className="flex items-center gap-1.5 font-bold text-slate-800 group-hover:text-sky-700">
+                <span className="w-2 h-2 rounded-full bg-sky-500"></span>
+                <span>Student</span>
+              </div>
+              <p className="text-[10px] text-slate-600 font-mono truncate mt-1">student@mentorlink.ph</p>
+              <p className="text-[10px] text-slate-400 font-mono mt-0.5">student123</p>
+            </button>
+
+            {/* Mentor Tile */}
+            <button
+              type="button"
+              onClick={() => {
+                setEmail('mentor@mentorlink.ph');
+                setPassword('mentor123');
+                setErrorMessage('');
+              }}
+              className="p-2.5 rounded-xl bg-white border border-slate-200 hover:border-emerald-300 hover:bg-emerald-50/50 text-left transition-all active:scale-95 group shadow-2xs"
+            >
+              <div className="flex items-center gap-1.5 font-bold text-slate-800 group-hover:text-emerald-700">
+                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>Mentor</span>
+              </div>
+              <p className="text-[10px] text-slate-600 font-mono truncate mt-1">mentor@mentorlink.ph</p>
+              <p className="text-[10px] text-slate-400 font-mono mt-0.5">mentor123</p>
+            </button>
+          </div>
+        </div>
+
         {/* Divider: Line - Or - Line */}
-        <div className="flex items-center my-6">
-          <div className="flex-1 border-t border-slate-900"></div>
-          <span className="px-4 text-sm font-bold text-slate-900">Or</span>
-          <div className="flex-1 border-t border-slate-900"></div>
+        <div className="flex items-center my-4">
+          <div className="flex-1 border-t border-slate-200"></div>
+          <span className="px-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Or</span>
+          <div className="flex-1 border-t border-slate-200"></div>
         </div>
 
         {/* Google Authentication Pill */}
@@ -213,9 +281,9 @@ export default function LoginScreen({
           <button
             type="button"
             onClick={() => {
-              if (onLogin) onLogin({ email: 'google.user@university.edu', role: selectedRole });
+              if (onLogin) onLogin({ email: 'student@mentorlink.ph', role: 'student', name: 'Google Student User' });
             }}
-            className="w-full sm:w-64 py-3 px-6 rounded-full bg-slate-100 hover:bg-slate-200/90 border border-slate-200 flex items-center justify-center gap-3 transition-colors shadow-sm active:scale-95 cursor-pointer"
+            className="w-full sm:w-64 py-3 px-6 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 flex items-center justify-center gap-3 transition-colors shadow-sm active:scale-95 cursor-pointer"
           >
             {/* Google Multi-colored Vector Logo */}
             <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -236,17 +304,17 @@ export default function LoginScreen({
                 d="M12 4.77c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.25 2.7 1.27 6.59l4.01 3.13c.95-2.84 3.6-4.95 6.72-4.95z"
               />
             </svg>
-            <span className="font-bold text-slate-900 text-sm">Google</span>
+            <span className="font-bold text-slate-800 text-sm">Google</span>
           </button>
         </div>
 
         {/* Bottom Switcher: Don't have an account? Sign Up */}
-        <p className="text-center text-xs sm:text-sm text-slate-800 mt-7">
+        <p className="text-center text-xs sm:text-sm text-slate-500 mt-6">
           Don't have an account?{' '}
           <button
             type="button"
             onClick={onNavigateToSignUp}
-            className="font-bold italic text-[#057199] hover:underline focus:outline-none"
+            className="font-bold text-sky-600 hover:text-sky-700 hover:underline focus:outline-none"
           >
             Sign Up
           </button>

@@ -25,8 +25,7 @@ export default function MessagesScreen({
         sessionsCount: 24,
         isVerified: true,
         isOnline: true,
-        rate: '₱0.00 / hr (Volunteer)',
-        isVolunteer: true,
+        rate: '₱250.00 / hr',
         avatarBg: 'bg-sky-600',
         initials: 'AS'
       },
@@ -48,7 +47,6 @@ export default function MessagesScreen({
         isVerified: true,
         isOnline: true,
         rate: '₱250.00 / hr',
-        isVolunteer: false,
         avatarBg: 'bg-emerald-600',
         initials: 'MC'
       },
@@ -69,8 +67,7 @@ export default function MessagesScreen({
         sessionsCount: 45,
         isVerified: true,
         isOnline: false,
-        rate: '₱0.00 / hr (Volunteer)',
-        isVolunteer: true,
+        rate: '₱200.00 / hr',
         avatarBg: 'bg-purple-600',
         initials: 'CR'
       },

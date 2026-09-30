@@ -20,8 +20,14 @@ export default function MentorProfileScreen({
     rating: 4.9,
     sessionsCount: 24,
     isVerified: true,
-    rate: '₱0.00 / hr (Volunteer)',
-    isVolunteer: true,
+    rate: '₱250.00 / hr',
+    hourlyRate: 250,
+    paymentMethods: ['GCash', 'Bank Account (BDO)'],
+    gcashNumber: '0917-555-0192',
+    gcashName: 'Alex Santos',
+    bankName: 'BDO Unibank',
+    bankAccount: '1092-8834-5512',
+    bankHolder: 'Alex Santos',
     avatarBg: 'bg-sky-600',
     initials: 'AS',
     bio: "I'm a web development mentor who helps students build their programming skills through practical projects and guided learning. I specialize in modern JavaScript, React ecosystems, and frontend architecture.",
@@ -33,9 +39,9 @@ export default function MentorProfileScreen({
       { title: 'One-on-One Sessions', desc: 'Focused discussions tailored to your personal learning pace' }
     ],
     availability: 'Monday – Friday, 6:00 PM – 9:00 PM',
-    duration: '30–60 minutes',
+    duration: '60 minutes',
     format: 'Online (In-App Virtual Classroom)',
-    booking: 'By Request'
+    booking: 'Direct with 50% Down Payment'
   };
 
   const activeMentor = {
@@ -53,7 +59,6 @@ export default function MentorProfileScreen({
     rating: typeof mentor?.rating === 'number' ? mentor.rating : defaultMentor.rating,
     sessionsCount: typeof mentor?.sessionsCount === 'number' ? mentor.sessionsCount : defaultMentor.sessionsCount,
     rate: mentor?.rate || defaultMentor.rate,
-    isVolunteer: mentor?.isVolunteer ?? defaultMentor.isVolunteer,
     avatarBg: mentor?.avatarBg || defaultMentor.avatarBg,
     initials: mentor?.initials || (mentor?.name ? mentor.name.split(' ').map((n) => n[0]).join('').substring(0, 2).toUpperCase() : defaultMentor.initials)
   };
@@ -221,8 +226,8 @@ export default function MentorProfileScreen({
             <span>{activeMentor.sessionsCount} Sessions</span>
           </div>
           <span className="text-slate-300">·</span>
-          <span className="text-emerald-700 font-bold">
-            {activeMentor.isVolunteer ? 'Volunteer' : (activeMentor.rate || '₱0.00').split(' ')[0]}
+          <span className="text-sky-700 font-extrabold">
+            {activeMentor.rate || '₱250.00 / hr'}
           </span>
         </div>
 
@@ -377,10 +382,21 @@ export default function MentorProfileScreen({
           </div>
 
           <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 space-y-0.5">
-            <span className="text-[10px] text-slate-400 font-semibold uppercase">Mentoring Fee</span>
-            <p className="font-bold text-emerald-600">
-              {activeMentor.isVolunteer ? 'Volunteer (₱0)' : activeMentor.rate}
+            <span className="text-[10px] text-slate-400 font-semibold uppercase">Hourly Rate</span>
+            <p className="font-bold text-sky-700">
+              {activeMentor.rate || '₱250.00 / hr'}
             </p>
+          </div>
+        </div>
+
+        {/* Anti-Scam Down Payment Policy Notice */}
+        <div className="p-3 rounded-xl bg-sky-50/80 border border-sky-200/80 flex items-start gap-2.5">
+          <svg className="w-4 h-4 text-sky-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+          </svg>
+          <div className="text-[11px] text-sky-950 leading-relaxed">
+            <span className="font-bold">Anti-Scam Protection: </span>
+            A 50% down payment is required upon booking via GCash or Bank Transfer to secure your reserved slot. The remaining 50% balance is paid after the session.
           </div>
         </div>
       </div>

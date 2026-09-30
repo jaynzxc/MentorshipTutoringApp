@@ -42,6 +42,12 @@ export default function MentorSessionsScreen({
         time: '7:00 PM – 8:00 PM',
         duration: '60 min',
         format: 'Online',
+        totalFee: 250,
+        downPayment: 125,
+        remainingBalance: 125,
+        paymentMethod: 'GCash',
+        referenceNumber: 'MP-8921-7734',
+        paymentStatus: 'downpayment_submitted',
         studentNote: "I'd like to understand JavaScript functions, especially parameters and return values.",
         countdown: 'Starts in 4 days'
       },
@@ -62,6 +68,12 @@ export default function MentorSessionsScreen({
         time: '6:00 PM – 7:00 PM',
         duration: '60 min',
         format: 'Online',
+        totalFee: 250,
+        downPayment: 125,
+        remainingBalance: 125,
+        paymentMethod: 'BDO',
+        referenceNumber: 'BDO-0921-3312',
+        paymentStatus: 'downpayment_verified',
         studentNote: 'Need assistance organizing component state and passing props efficiently.',
         countdown: 'Starts in 6 days'
       },
@@ -82,6 +94,12 @@ export default function MentorSessionsScreen({
         time: '7:00 PM – 8:00 PM',
         duration: '60 min',
         format: 'Online',
+        totalFee: 250,
+        downPayment: 125,
+        remainingBalance: 125,
+        paymentMethod: 'GCash',
+        referenceNumber: 'MP-8921-7734',
+        paymentStatus: 'downpayment_verified',
         studentNote: 'Following up on our function session with practical async/await examples.',
         countdown: 'Starts in 11 days'
       },
@@ -102,7 +120,8 @@ export default function MentorSessionsScreen({
         time: '5:00 PM – 6:00 PM',
         duration: '60 min',
         format: 'Online',
-        serviceHoursCredited: '1.0 hr',
+        totalPaid: '₱250.00',
+        paymentStatus: 'fully_paid',
         notes: 'Reviewed mobile UI components, 8pt spatial grids, and autolayout responsiveness in Figma.'
       }
     ]
@@ -478,7 +497,7 @@ export default function MentorSessionsScreen({
                     COMPLETED
                   </span>
                   <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">
-                    +{comp.serviceHoursCredited || '1.0 hr'} Service Credit
+                    {comp.totalPaid || '₱250.00'} Settled
                   </span>
                 </div>
 

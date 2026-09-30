@@ -15,6 +15,12 @@ export default function MentorDashboard({ onNavigateTab, onViewStudentProfile, o
       date: 'Sept 25, 2026',
       time: '7:00 PM – 8:00 PM',
       format: 'Online',
+      totalFee: 250,
+      downPayment: 125,
+      remainingBalance: 125,
+      paymentMethod: 'GCash',
+      referenceNumber: 'MP-8921-7734',
+      paymentStatus: 'downpayment_submitted',
       initials: 'DG',
       avatarBg: 'bg-sky-500'
     }
@@ -30,6 +36,12 @@ export default function MentorDashboard({ onNavigateTab, onViewStudentProfile, o
       date: 'Sept 25, 2026',
       time: '7:00 PM – 8:00 PM',
       format: 'Online',
+      totalFee: 250,
+      downPayment: 125,
+      remainingBalance: 125,
+      paymentMethod: 'GCash',
+      referenceNumber: 'MP-8921-7734',
+      paymentStatus: 'downpayment_verified',
       countdown: 'Starts in 2 days',
       isJoinable: false,
       initials: 'DG',
@@ -235,27 +247,23 @@ export default function MentorDashboard({ onNavigateTab, onViewStudentProfile, o
             </div>
           </button>
 
-          {/* Metric 2: My Students */}
-          <button
-            type="button"
-            onClick={() => onNavigateTab && onNavigateTab('students')}
-            className="bg-white rounded-2xl border border-teal-100 p-3.5 shadow-2xs space-y-2 hover:border-teal-300 hover:shadow-xs active:scale-[0.99] transition-all text-left w-full"
-          >
+          {/* Metric 2: Total Earnings */}
+          <div className="bg-white rounded-2xl border border-emerald-100 p-3.5 shadow-2xs space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-slate-500">My Students</span>
-              <div className="w-7 h-7 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center shrink-0">
+              <span className="text-[11px] font-bold text-slate-500">Total Earnings</span>
+              <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                 </svg>
               </div>
             </div>
             <div>
-              <span className="text-2xl font-extrabold text-teal-700 tracking-tight">
-                12
+              <span className="text-2xl font-extrabold text-emerald-600 tracking-tight">
+                ₱3,750
               </span>
-              <p className="text-[10px] text-slate-400 font-semibold mt-0.5">Active students</p>
+              <p className="text-[10px] text-slate-400 font-semibold mt-0.5">15 paid sessions</p>
             </div>
-          </button>
+          </div>
 
           {/* Metric 3: Pending Requests */}
           <button
@@ -399,18 +407,31 @@ export default function MentorDashboard({ onNavigateTab, onViewStudentProfile, o
                       <span>{req.time}</span>
                     </div>
                   </div>
+
+                  {/* Anti-Scam Down Payment Details */}
+                  <div className="pt-2 border-t border-slate-200/60 flex items-center justify-between text-[11px]">
+                    <div>
+                      <span className="font-bold text-slate-800">50% Down Payment: ₱{(req.downPayment || 125).toFixed(2)}</span>
+                      <span className="text-[10px] text-slate-500 block">
+                        Via {req.paymentMethod || 'GCash'} · Ref: <span className="font-mono font-bold text-sky-700">{req.referenceNumber || 'MP-8921-7734'}</span>
+                      </span>
+                    </div>
+                    <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10px] font-bold border border-amber-200">
+                      Ref Submitted
+                    </span>
+                  </div>
                 </div>
 
                 {/* Request Actions */}
                 <div className="flex items-center gap-2 pt-1">
                   <button
                     onClick={() => setAcceptModalRequest(req)}
-                    className="touch-target flex-1 bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold py-2.5 px-4 rounded-xl shadow-xs transition-all active:scale-[0.98] flex items-center justify-center gap-1.5"
+                    className="touch-target flex-1 bg-sky-600 hover:bg-sky-700 text-white text-xs font-semibold py-2.5 px-3 rounded-xl shadow-xs transition-all active:scale-[0.98] flex items-center justify-center gap-1.5"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                     </svg>
-                    <span>Accept</span>
+                    <span>Verify ₱{(req.downPayment || 125).toFixed(0)} & Accept</span>
                   </button>
 
                   <button
@@ -661,14 +682,45 @@ export default function MentorDashboard({ onNavigateTab, onViewStudentProfile, o
               </p>
             </div>
 
-            <div className="bg-slate-50 rounded-xl p-3 text-xs text-slate-600 space-y-1 border border-slate-100">
-              <p>
-                <span className="font-semibold text-slate-700">Topic:</span>{' '}
-                {acceptModalRequest.topic}
-              </p>
-              <p>
-                <span className="font-semibold text-slate-700">Format:</span>{' '}
-                {acceptModalRequest.format} (In-App Virtual Classroom)
+            <div className="bg-slate-50 rounded-xl p-3 text-xs text-slate-600 space-y-1.5 border border-slate-100 text-left">
+              <div className="flex justify-between items-center">
+                <span className="font-semibold text-slate-700">Topic:</span>
+                <span className="font-medium text-slate-900">{acceptModalRequest.topic}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="font-semibold text-slate-700">Format:</span>
+                <span className="font-medium text-slate-900">{acceptModalRequest.format}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="font-semibold text-slate-700">Total Session Fee:</span>
+                <span className="font-bold text-slate-900">₱{(acceptModalRequest.totalFee || 250).toFixed(2)}</span>
+              </div>
+            </div>
+
+            {/* Anti-Scam Down Payment Verification Box */}
+            <div className="bg-emerald-50 rounded-2xl p-3.5 border border-emerald-200 text-left space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-emerald-950">50% Down Payment</span>
+                <span className="text-sm font-black text-emerald-700">
+                  ₱{(acceptModalRequest.downPayment || 125).toFixed(2)}
+                </span>
+              </div>
+
+              <div className="text-[11px] space-y-1 text-emerald-900">
+                <div className="flex justify-between">
+                  <span className="text-emerald-700">Payment Channel:</span>
+                  <span className="font-semibold">{acceptModalRequest.paymentMethod || 'GCash'}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-emerald-700">Submitted Reference:</span>
+                  <span className="font-mono font-bold text-slate-900 bg-white px-2 py-0.5 rounded border border-emerald-200">
+                    {acceptModalRequest.referenceNumber || 'MP-8921-7734'}
+                  </span>
+                </div>
+              </div>
+
+              <p className="text-[10px] text-amber-800 bg-amber-50/90 rounded-lg p-2 border border-amber-200/80 font-medium leading-relaxed">
+                Please verify that ₱{(acceptModalRequest.downPayment || 125).toFixed(2)} was received in your {acceptModalRequest.paymentMethod || 'GCash'} before accepting.
               </p>
             </div>
 
@@ -683,7 +735,7 @@ export default function MentorDashboard({ onNavigateTab, onViewStudentProfile, o
                 onClick={handleConfirmAccept}
                 className="touch-target flex-1 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold py-2.5 rounded-xl shadow-xs transition-all active:scale-95"
               >
-                Confirm Session
+                Verify ₱{(acceptModalRequest.downPayment || 125).toFixed(0)} & Accept
               </button>
             </div>
           </div>

@@ -18,8 +18,7 @@ export default function SessionCompletedScreen({
       rating: 4.8,
       sessionsCount: 39,
       isVerified: true,
-      rate: '₱0.00 / hr (Volunteer)',
-      isVolunteer: true,
+      rate: '₱250.00 / hr',
       avatarBg: 'bg-emerald-600',
       initials: 'MC'
     },
@@ -28,13 +27,16 @@ export default function SessionCompletedScreen({
     time: '6:00 PM – 7:00 PM',
     duration: '60 min',
     format: 'Online (Virtual Classroom)',
+    totalFee: 250,
+    downPayment: 125,
+    finalPayment: 125,
+    paymentMethod: 'GCash',
+    paymentSettled: true,
     studyNotes: `• BST Invariant: Left subtree keys < Parent < Right subtree keys.
 • In-Order Traversal (L -> Root -> R) produces sorted keys.
 • Pre-Order Traversal is useful for serializing and cloning trees.
 • Balancing (AVL / Red-Black) guarantees O(log n) search/insert/delete operations.
-• Assignment: Implement in-order traversal and solve 2 LeetCode BST questions for next week.`,
-    isVolunteerAccredited: true,
-    accreditedHours: 1.0
+• Assignment: Implement in-order traversal and solve 2 LeetCode BST questions for next week.`
   };
 
   const mentor = activeSession.mentor;
@@ -321,24 +323,25 @@ export default function SessionCompletedScreen({
         )}
       </div>
 
-      {/* 6. University Community Service Hours Accreditation Box */}
-      {activeSession.isVolunteerAccredited && (
-        <div className="bg-sky-50/80 rounded-2xl p-4 border border-sky-200/80 shadow-xs flex items-start gap-3">
-          <div className="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center shrink-0">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342" />
-            </svg>
-          </div>
-          <div className="space-y-0.5 text-xs text-sky-950">
-            <h3 className="font-bold text-slate-900">
-              Community Service Hours Accredited
-            </h3>
-            <p className="text-[11px] text-sky-800 leading-relaxed font-medium">
-              This completed session accredited <span className="font-bold text-sky-950">1.0 Service Hour</span> to {mentor.name}'s verified University Community Service transcript.
-            </p>
-          </div>
+      {/* 6. Payment Receipt & Settlement Box */}
+      <div className="bg-emerald-50/80 rounded-2xl p-4 border border-emerald-200/80 shadow-xs flex items-start gap-3">
+        <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
         </div>
-      )}
+        <div className="space-y-0.5 text-xs text-emerald-950 flex-1">
+          <div className="flex items-center justify-between">
+            <h3 className="font-bold text-slate-900">
+              Direct Payment Settled
+            </h3>
+            <span className="font-bold text-emerald-700">₱{(activeSession.totalFee || 250).toFixed(2)} Paid</span>
+          </div>
+          <p className="text-[11px] text-emerald-800 leading-relaxed font-medium">
+            50% down payment (₱{(activeSession.downPayment || 125).toFixed(2)}) and remaining balance (₱{(activeSession.finalPayment || 125).toFixed(2)}) fully transferred to {mentor.name}.
+          </p>
+        </div>
+      </div>
 
       {/* 7. Next Actions Buttons */}
       <div className="space-y-2 pt-2">

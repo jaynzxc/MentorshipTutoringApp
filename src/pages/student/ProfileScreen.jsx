@@ -84,8 +84,8 @@ export default function ProfileScreen({
       a: 'Open your confirmed session card in My Sessions or on the Dashboard and tap Join Session once the room is unlocked (10 minutes before start).'
     },
     {
-      q: 'Are peer mentors accredited for community service hours?',
-      a: 'Yes! Volunteer mentors automatically receive verified University Community Service Hours upon completed sessions.'
+      q: 'How does the 50% anti-scam down payment work?',
+      a: 'To protect mentors and guarantee student bookings, a 50% down payment is required via GCash or Bank Account. You enter your payment reference number upon booking, which the mentor verifies before confirming.'
     }
   ];
 
@@ -1005,7 +1005,7 @@ export default function ProfileScreen({
               </div>
               <div>
                 <h3 className="font-bold text-slate-900">2. How We Use Information</h3>
-                <p>Data is used strictly to match learners with mentors, coordinate schedules, verify service hours, and maintain in-app security.</p>
+                <p>Data is used strictly to match learners with mentors, coordinate schedules, verify direct payments, and maintain in-app security.</p>
               </div>
               <div>
                 <h3 className="font-bold text-slate-900">3. Data Protection</h3>
@@ -1040,7 +1040,7 @@ export default function ProfileScreen({
               <p className="text-[11px] text-slate-400">Mobile Peer Mentoring & Tutoring Platform · v1.0.0</p>
             </div>
             <p className="text-xs text-slate-600 leading-relaxed">
-              MentorLinks bridges high school and university students with qualified peer mentors, fostering collaborative learning, hands-on guidance, and verifiable University Community Service Hours accreditation.
+              MentorLinks bridges high school and university students with qualified peer mentors, fostering collaborative learning, hands-on guidance, and transparent direct-pay mentorship.
             </p>
             <div className="pt-2">
               <button

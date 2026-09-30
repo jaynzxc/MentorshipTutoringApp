@@ -20,8 +20,14 @@ export default function BookSessionScreen({ mentor, onBack, onComplete, onProcee
     specialization: 'Web Development Mentor',
     rating: 4.9,
     sessionsCount: 24,
-    rate: '₱0.00 / hr (Volunteer)',
-    isVolunteer: true,
+    rate: '₱250.00 / hr',
+    hourlyRate: 250,
+    paymentMethods: ['GCash', 'BDO Unibank'],
+    gcashNumber: '0917-555-0192',
+    gcashName: 'Alex Santos',
+    bankName: 'BDO Unibank',
+    bankAccount: '1092-8834-5512',
+    bankHolder: 'Alex Santos',
     avatarBg: 'bg-sky-600',
     initials: 'AS'
   };
@@ -66,6 +72,11 @@ export default function BookSessionScreen({ mentor, onBack, onComplete, onProcee
       return;
     }
     setErrorMsg('');
+    const hourlyRate = activeMentor.hourlyRate || parseInt(String(activeMentor.rate).replace(/[^0-9]/g, '')) || 250;
+    const totalFee = hourlyRate;
+    const downPayment = Math.round(totalFee * 0.5);
+    const remainingBalance = totalFee - downPayment;
+
     if (onProceedToReview) {
       onProceedToReview({
         mentor: activeMentor,
@@ -73,7 +84,10 @@ export default function BookSessionScreen({ mentor, onBack, onComplete, onProcee
         time: selectedTime,
         duration: selectedDuration,
         format: selectedFormat,
-        topic: topic
+        topic: topic,
+        totalFee: totalFee,
+        downPayment: downPayment,
+        remainingBalance: remainingBalance
       });
       return;
     }
@@ -154,9 +168,12 @@ export default function BookSessionScreen({ mentor, onBack, onComplete, onProcee
           </div>
         </div>
 
-        <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-          {activeMentor.isVolunteer ? 'Volunteer (₱0)' : activeMentor.rate}
-        </span>
+        <div className="text-right">
+          <span className="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-200 block">
+            {activeMentor.rate}
+          </span>
+          <span className="text-[9px] text-slate-400 font-semibold mt-0.5 block">50% Down Payment</span>
+        </div>
       </div>
 
       {/* ================= STEP 1: CONFIGURE BOOKING ================= */}
@@ -384,11 +401,17 @@ export default function BookSessionScreen({ mentor, onBack, onComplete, onProcee
                 <span className="font-semibold text-sky-600">{selectedFormat} (In-App Classroom)</span>
               </div>
 
-              {/* Rate */}
+              {/* Rate & Down Payment */}
               <div className="flex items-center justify-between pt-3">
-                <span className="text-slate-500 font-medium">Mentoring Fee:</span>
-                <span className="font-bold text-emerald-600">
-                  {activeMentor.isVolunteer ? '₱0.00 (Volunteer Hours Accredited)' : activeMentor.rate}
+                <span className="text-slate-500 font-medium">Session Fee:</span>
+                <span className="font-bold text-slate-900">
+                  {activeMentor.rate}
+                </span>
+              </div>
+              <div className="flex items-center justify-between pt-3">
+                <span className="text-slate-500 font-medium">50% Required Down Payment:</span>
+                <span className="font-extrabold text-sky-600">
+                  ₱{Math.round((activeMentor.hourlyRate || 250) * 0.5)}.00
                 </span>
               </div>
 

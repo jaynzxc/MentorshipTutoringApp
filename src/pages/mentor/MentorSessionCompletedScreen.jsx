@@ -34,7 +34,8 @@ export default function MentorSessionCompletedScreen({
     time: '7:00 PM – 8:00 PM',
     duration: '60 minutes',
     format: 'Online Room',
-    serviceHoursCredited: '1.0 hr',
+    totalFee: 250,
+    paymentStatus: 'fully_paid',
     notes: 'Discussed JavaScript functions, parameters, return values, and basic examples. Daniela grasped arrow function syntax quickly and built a solid callback demonstration.'
   };
 
@@ -111,12 +112,12 @@ export default function MentorSessionCompletedScreen({
         <div className="bg-white/10 rounded-xl p-2.5 flex items-center justify-between text-xs mt-2 border border-white/15">
           <span className="font-semibold text-emerald-50 flex items-center gap-1.5">
             <svg className="w-4 h-4 text-emerald-300" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
             </svg>
-            Community Service Credit:
+            Direct Payment Settled:
           </span>
           <span className="font-extrabold text-white bg-white/20 px-2 py-0.5 rounded-md">
-            +{activeSession.serviceHoursCredited || '1.0 hr'}
+            ₱250.00 (Fully Paid)
           </span>
         </div>
       </div>
@@ -155,8 +156,8 @@ export default function MentorSessionCompletedScreen({
               </span>
             </div>
             <div className="space-y-1">
-              <span className="text-slate-500 font-medium block">Economic Model</span>
-              <p className="text-slate-900 font-bold">₱0.00 (Volunteer Mentor)</p>
+              <span className="text-slate-500 font-medium block">Payment Status</span>
+              <p className="text-emerald-700 font-bold">₱250.00 (Fully Paid)</p>
             </div>
           </div>
         </div>

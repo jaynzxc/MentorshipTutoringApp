@@ -21,8 +21,7 @@ export default function SessionDetailsScreen({
       rating: 4.9,
       sessionsCount: 24,
       isVerified: true,
-      rate: '₱0.00 / hr (Volunteer)',
-      isVolunteer: true,
+      rate: '₱250.00 / hr',
       avatarBg: 'bg-sky-600',
       initials: 'AS'
     },
@@ -30,6 +29,12 @@ export default function SessionDetailsScreen({
     time: '7:00 PM – 8:00 PM',
     duration: '60 min',
     format: 'Online',
+    totalFee: 250,
+    downPayment: 125,
+    remainingBalance: 125,
+    paymentMethod: 'GCash',
+    referenceNumber: 'MP-8921-7734',
+    paymentStatus: 'downpayment_submitted',
     topic: 'I want help understanding JavaScript functions, parameters, and return values.',
     submittedAt: 'Today at 7:30 PM'
   };
@@ -80,7 +85,7 @@ export default function SessionDetailsScreen({
           Session Request Details
         </h1>
         <p className="text-xs text-slate-500 font-medium mt-0.5">
-          Review the status and scheduling parameters of your mentorship request.
+          Review the status, scheduling parameters, and payment breakdown of your mentorship booking.
         </p>
       </div>
 
@@ -94,16 +99,20 @@ export default function SessionDetailsScreen({
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
               </span>
               <span className="text-xs font-bold uppercase tracking-wider text-amber-900">
-                Pending Request
+                Pending Verification
               </span>
             </div>
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300">
-              Awaiting Mentor Acceptance
+              50% Down Payment Submitted
             </span>
           </div>
           <p className="text-xs text-amber-800 leading-relaxed font-medium">
-            Waiting for <span className="font-bold text-amber-950">{mentor.name}</span> to accept your session request. You will receive an in-app notification once the mentor confirms.
+            Waiting for <span className="font-bold text-amber-950">{mentor.name}</span> to verify your 50% down payment (₱{(activeSession.downPayment || 125).toFixed(2)}) and accept your session request.
           </p>
+          <div className="bg-white/80 rounded-xl p-2.5 border border-amber-200/60 flex items-center justify-between text-[11px]">
+            <span className="text-slate-600 font-medium">Submitted Ref No.:</span>
+            <span className="font-mono font-bold text-slate-800">{activeSession.referenceNumber || 'MP-8921-7734'}</span>
+          </div>
         </div>
       )}
 
@@ -131,11 +140,11 @@ export default function SessionDetailsScreen({
               </span>
             </div>
             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">
-              Ready to Meet
+              Down Payment Verified
             </span>
           </div>
           <p className="text-xs text-emerald-800 leading-relaxed font-medium">
-            Great news! <span className="font-bold text-emerald-950">{mentor.name}</span> has accepted your session request.
+            Great news! <span className="font-bold text-emerald-950">{mentor.name}</span> verified your down payment and confirmed the session. Remaining balance of ₱{(activeSession.remainingBalance || 125).toFixed(2)} is due upon completion.
           </p>
         </div>
       )}
@@ -146,8 +155,8 @@ export default function SessionDetailsScreen({
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
             Assigned Mentor
           </h3>
-          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-            {mentor.isVolunteer ? 'Volunteer (₱0)' : mentor.rate}
+          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200">
+            {mentor.rate || '₱250.00 / hr'}
           </span>
         </div>
 
@@ -246,17 +255,51 @@ export default function SessionDetailsScreen({
             </span>
           </div>
 
-          {/* Fee / Volunteer */}
+          {/* Session Fee & Down Payment Breakdown */}
+          <div className="flex items-center justify-between pt-3">
+            <div className="flex items-center gap-2 text-slate-500 font-medium">
+              <svg className="w-4 h-4 text-sky-600 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+              <span>Total Session Fee</span>
+            </div>
+            <span className="font-bold text-slate-900">
+              ₱{(activeSession.totalFee || 250).toFixed(2)}
+            </span>
+          </div>
+
           <div className="flex items-center justify-between pt-3">
             <div className="flex items-center gap-2 text-slate-500 font-medium">
               <svg className="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
               </svg>
-              <span>Mentoring Rate</span>
+              <span>50% Down Payment</span>
             </div>
-            <span className="font-black text-emerald-600">
-              {mentor.isVolunteer ? '₱0.00 · Free / Volunteer' : mentor.rate}
-            </span>
+            <div className="text-right">
+              <span className="font-bold text-emerald-600">
+                ₱{(activeSession.downPayment || 125).toFixed(2)}
+              </span>
+              <span className="text-[10px] text-slate-400 block font-normal">
+                Via {activeSession.paymentMethod || 'GCash'}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between pt-3">
+            <div className="flex items-center gap-2 text-slate-500 font-medium">
+              <svg className="w-4 h-4 text-amber-500 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+              <span>Remaining Balance</span>
+            </div>
+            <div className="text-right">
+              <span className="font-bold text-amber-700">
+                ₱{(activeSession.remainingBalance || 125).toFixed(2)}
+              </span>
+              <span className="text-[10px] text-slate-400 block font-normal">
+                Due upon completion
+              </span>
+            </div>
           </div>
         </div>
       </div>
